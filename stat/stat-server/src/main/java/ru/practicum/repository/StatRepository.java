@@ -10,8 +10,8 @@ import java.util.List;
 
 public interface StatRepository extends JpaRepository<Stats, Long> {
     @Query("""
-                SELECT new ru.practicum.StatsDto(s.app, s.uri, count(s.ip))
-                FROM Stat AS s
+                SELECT new ru.practicum.dto.StatsDto(s.app, s.uri, count(s.ip))
+                FROM Stats AS s
                 WHERE s.timestamp BETWEEN :start AND :end AND s.uri IN :uris
                 GROUP BY s.app, s.uri
                 ORDER BY count(s.ip) DESC
@@ -21,8 +21,8 @@ public interface StatRepository extends JpaRepository<Stats, Long> {
                                    List<String> uris);
 
     @Query("""
-                SELECT new ru.practicum.StatsDto(s.app, s.uri, count(s.ip))
-                FROM Stat AS s
+                SELECT new ru.practicum.dto.StatsDto(s.app, s.uri, count(s.ip))
+                FROM Stats AS s
                 WHERE s.timestamp BETWEEN :start AND :end
                 GROUP BY s.app, s.uri
                 ORDER BY count(s.ip) DESC
@@ -31,8 +31,8 @@ public interface StatRepository extends JpaRepository<Stats, Long> {
                                       LocalDateTime end);
 
     @Query("""
-                SELECT new ru.practicum.StatsDto(s.app, s.uri, count(DISTINCT s.ip))
-                FROM Stat AS s
+                SELECT new ru.practicum.dto.StatsDto(s.app, s.uri, count(DISTINCT s.ip))
+                FROM Stats AS s
                 WHERE s.timestamp BETWEEN :start AND :end AND s.uri IN :uris
                 GROUP BY s.app, s.uri
                 ORDER BY count(DISTINCT s.ip) DESC
@@ -42,8 +42,8 @@ public interface StatRepository extends JpaRepository<Stats, Long> {
                                               List<String> uris);
 
     @Query("""
-                SELECT new ru.practicum.StatsDto(s.app, s.uri, count(DISTINCT s.ip))
-                FROM Stat AS s
+                SELECT new ru.practicum.dto.StatsDto(s.app, s.uri, count(DISTINCT s.ip))
+                FROM Stats AS s
                 WHERE s.timestamp BETWEEN :start AND :end
                 GROUP BY s.app, s.uri
                 ORDER BY count(DISTINCT s.ip) DESC
