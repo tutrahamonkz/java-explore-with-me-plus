@@ -29,7 +29,7 @@ public class StatsServerController {
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
-    public StatsDto saveHitRequest(@RequestBody @Valid HitDto hitDto) {
-        return statsService.saveRequest(hitDto);
+    public void saveHitRequest(@RequestBody @Valid HitDto hitDto) {
+        statsService.saveRequest(hitDto);
     }
 }
