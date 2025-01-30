@@ -11,5 +11,5 @@ import ru.practicum.model.Stats;
 public interface StatsMapper {
     StatsDto toDto(Stats stats);
 
-    Stats toEntity(HitDto statDto);
+    Stats toEntity(HitDto hitDto);
 }
