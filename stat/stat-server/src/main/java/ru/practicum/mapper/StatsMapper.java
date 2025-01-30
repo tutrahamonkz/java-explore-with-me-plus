@@ -3,6 +3,7 @@ package ru.practicum.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
+import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatsDto;
 import ru.practicum.model.Stats;
 
@@ -10,5 +11,5 @@ import ru.practicum.model.Stats;
 public interface StatsMapper {
     StatsDto toDto(Stats stats);
 
-    Stats toEntity(StatsDto statDto);
+    Stats toEntity(HitDto statDto);
 }

@@ -2,6 +2,7 @@ package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatsDto;
 import ru.practicum.mapper.StatsMapper;
 import ru.practicum.model.Stats;
@@ -19,10 +20,8 @@ public class StatsServiceImpl implements StatsService {
     private final StatRepository statRepository;
 
     @Override
-    public StatsDto saveRequest(StatsDto statDto) {
-
-
-        Stats stat = statsMapper.toEntity(statDto);
+    public StatsDto saveRequest(HitDto hitDto) {
+        Stats stat = statsMapper.toEntity(hitDto);
         return statsMapper.toDto(statRepository.save(stat));
     }
 
