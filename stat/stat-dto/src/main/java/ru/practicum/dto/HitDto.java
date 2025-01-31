@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class HitDto {
 
     @NotBlank(message = "app не должен быть пустым")
