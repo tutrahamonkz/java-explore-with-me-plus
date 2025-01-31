@@ -22,7 +22,7 @@ public class MainApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(MainApplication.class, args);
         StatClient stateClient = context.getBean(StatClient.class);
-        ResponseEntity<Void> hitResponse = stateClient.hit( HitDto.builder()
+        ResponseEntity<Void> hitResponse = stateClient.hit(HitDto.builder()
                 .app("main-service")
                 .uri("/events/1")
                 .ip("192.163.0.1")
@@ -33,7 +33,7 @@ public class MainApplication {
         } else {
             System.out.println("Ошибка при выполнении запроса hit: " + hitResponse.getStatusCode());
         }
-        ResponseEntity<List<StatsDto>> statsResponse = stateClient.getStats("2020-05-05 00:00:00", "2035-05-05 00:00:00", List.of("/events", "/events/1" ), false);
+        ResponseEntity<List<StatsDto>> statsResponse = stateClient.getStats("2020-05-05 00:00:00", "2035-05-05 00:00:00", List.of("/events", "/events/1"), false);
         if (statsResponse.getStatusCode().is2xxSuccessful()) {
             System.out.println("Запрос getStats выполнен успешно");
             List<StatsDto> stats = statsResponse.getBody();
@@ -42,5 +42,5 @@ public class MainApplication {
             System.out.println("Ошибка при выполнении запроса getStats: " + statsResponse.getStatusCode());
         }
     }
- }
+}
 
