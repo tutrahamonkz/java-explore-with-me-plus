@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class StatsDto {
 
     @NotBlank(message = "app не должен быть пустым")
