@@ -8,12 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.client.StatClient;
-import ru.practicum.dto.HitDto;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.dto.UsersDtoGetParam;
 import ru.practicum.user.service.UserService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Validated
@@ -29,7 +27,6 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<UserDto>> getUsers(@ModelAttribute @Valid UsersDtoGetParam usersDtoGetParam,
                                                   HttpServletRequest request) {
-        hitStatistic(request);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userService.getAll(usersDtoGetParam));
@@ -38,7 +35,6 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto, HttpServletRequest request) {
-        hitStatistic(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.create(userDto));
     }
@@ -46,15 +42,9 @@ public class UserController {
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> deleteUser(@PathVariable Long userId, HttpServletRequest request) {
-        hitStatistic(request);
         userService.delete(userId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .body("Пользователь c id: " + userId + " удален");
-    }
-
-    private void hitStatistic(HttpServletRequest request) {
-        statClient.hit(new HitDto(APP_NAME, request.getRequestURI(), request.getRemoteAddr(),
-                LocalDateTime.now()));
     }
 }
