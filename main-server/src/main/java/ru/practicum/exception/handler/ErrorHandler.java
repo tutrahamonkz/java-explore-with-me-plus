@@ -58,7 +58,7 @@ public class ErrorHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataAlreadyInUseException e) {
         String nowTime = LocalDateTime.now().format(FORMATTER);
-        HttpStatus status = HttpStatus.BAD_REQUEST; //возможно статус должен быть другим
+        HttpStatus status = HttpStatus.BAD_REQUEST; // возможно статус должен быть другим
         ResponseEntity<ErrorResponse> response = getResponseEntity(status,
                 "Исключение, связанное с нарушением целостности данных", e.getMessage(), nowTime);
         logging(e, status, nowTime);
