@@ -55,8 +55,8 @@ public class ErrorHandler {
     }
 
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataAlreadyInUseException e) {
+    @ExceptionHandler(DataAlreadyInUseException.class)
+    public ResponseEntity<ErrorResponse> handleDataAlreadyInUseException(DataAlreadyInUseException e) {
         String nowTime = LocalDateTime.now().format(FORMATTER);
         HttpStatus status = HttpStatus.BAD_REQUEST; // возможно статус должен быть другим
         ResponseEntity<ErrorResponse> response = getResponseEntity(status,
