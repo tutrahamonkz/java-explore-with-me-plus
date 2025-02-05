@@ -5,12 +5,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
-import ru.practicum.exception.DataAlreadyInUseException;
-import ru.practicum.exception.NotFoundException;
-import ru.practicum.exception.ValidationException;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
+import ru.practicum.exception.DataAlreadyInUseException;
+import ru.practicum.exception.NotFoundException;
 
 import java.util.List;
 
@@ -24,7 +23,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
         checkExists(newCategoryDto.getName());
-        checkLength(newCategoryDto.getName());
         Category newCategory = categoryMapper.toCategory(newCategoryDto);
         Category created = categoryRepository.save(newCategory);
         return categoryMapper.toCategoryDto(created);
@@ -46,7 +44,6 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryMapper.toCategoryDto(toUpdate);
         }
         checkExists(categoryDto.getName());
-        checkLength(categoryDto.getName());
         toUpdate.setName(categoryDto.getName());
         return categoryMapper.toCategoryDto(toUpdate);
     }
@@ -66,13 +63,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private void checkExists(String name) {
         if (categoryRepository.existsByNameIgnoreCase(name)) {
-            throw new DataAlreadyInUseException("Category with this name has already exist.");
-        }
-    }
-
-    private void checkLength(String name) {
-        if (name.length() > 50) {
-            throw new ValidationException("Длина названия категории > 50.");
+            throw new DataAlreadyInUseException("Категория с таким именем уже существует.");
         }
     }
 }
