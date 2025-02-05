@@ -1,4 +1,4 @@
-package ru.practicum.category.exceptions;
+package ru.practicum.exception;
 
 
 public class DataAlreadyInUseException extends RuntimeException {

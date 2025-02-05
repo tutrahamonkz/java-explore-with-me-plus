@@ -5,9 +5,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
-import ru.practicum.category.exceptions.DataAlreadyInUseException;
-import ru.practicum.category.exceptions.NotFoundException;
-import ru.practicum.category.exceptions.ValidationException;
+import ru.practicum.exception.DataAlreadyInUseException;
+import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.ValidationException;
 import ru.practicum.category.mapper.CategoryMapper;
 import ru.practicum.category.model.Category;
 import ru.practicum.category.repository.CategoryRepository;
@@ -65,7 +65,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     private void checkExists(String name) {
-        if (categoryRepository.findByNameIgnoreCase(name.toLowerCase()) != null) {
+        if (categoryRepository.existsByNameIgnoreCase(name)) {
             throw new DataAlreadyInUseException("Category with this name has already exist.");
         }
     }
