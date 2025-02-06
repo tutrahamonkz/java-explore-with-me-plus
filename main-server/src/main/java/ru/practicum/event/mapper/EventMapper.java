@@ -7,20 +7,29 @@ import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.model.Event;
 
+import java.util.List;
 
-@Mapper(componentModel = "spring")
+
+@Mapper(componentModel = "spring", uses = {LocationMapper.class})
 public interface EventMapper {
     //target - поле на выходе, source на входе
     @Mapping(target = "views", expression = "java(event.getViews() == null ? 0 : event.getViews().size())")
     EventShortDto toEventShortDto(Event event);
 
     @Mapping(target = "views", expression = "java(event.getViews() != null ? event.getViews().size() : 0)")
-        // Подсчёт просмотров
+
     EventFullDto toEventFullDto(Event event);
 
     @Mapping(target = "category.id", source = "category")
     @Mapping(target = "createdOn", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "state", expression = "java(ru.practicum.event.model.State.PENDING)")
     @Mapping(target = "participantLimit", source = "participantLimit", defaultValue = "0")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "initiator", ignore = true)
+    @Mapping(target = "confirmedRequests", ignore = true)
+    @Mapping(target = "views", ignore = true)
+    @Mapping(target = "publishedOn", ignore = true)
     Event toEntity(NewEventDto newEventDto);
+
+    List<EventShortDto> toEventShortDto(List<Event> events);
 }

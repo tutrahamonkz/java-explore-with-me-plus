@@ -32,9 +32,12 @@ public class NewEventDto {
     private LocalDateTime eventDate;
     @NotNull
     private LocationDto location;
+    @Builder.Default
     private Boolean paid = false;
     @PositiveOrZero
+    @Builder.Default
     private Integer participantLimit = 0;
+    @Builder.Default
     private Boolean requestModeration = true;
     @NotBlank
     @Length(min = 3, max = 120)

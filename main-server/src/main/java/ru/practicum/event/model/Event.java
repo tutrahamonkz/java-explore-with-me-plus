@@ -19,6 +19,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.validate.TimeAtLeastTwoHours;
 import ru.practicum.user.model.User;
@@ -31,6 +32,7 @@ import java.util.List;
 @Entity
 @Table(name = "events")
 @Builder(toBuilder = true)
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Event {
@@ -61,6 +63,7 @@ public class Event {
     @OneToMany(mappedBy = "event")
     private List<View> views; //просмотры события
     @Column(name = "request_moderation")
+    @Builder.Default
     private boolean requestModeration = true; //Нужна ли пре-модерация заявок на участие
     @NotNull
     private Boolean paid;

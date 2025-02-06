@@ -28,9 +28,11 @@ public class EventFullDto {
     private UserShortDto initiator;
     private LocationDto location;
     private boolean paid;
+    @Builder.Default
     private Integer participantLimit = 0;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
+    @Builder.Default
     private boolean requestModeration = true;
     private State state;
     private String title;
