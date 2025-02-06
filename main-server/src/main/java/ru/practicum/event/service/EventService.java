@@ -10,4 +10,6 @@ import java.util.List;
 public interface EventService {
     EventFullDto addEvent(Long userId, NewEventDto newEventDto);
     List<EventShortDto> getEventsForUser(EventDtoGetParam eventDtoGetParam);
+    EventFullDto getEventByIdForUser(EventDtoGetParam eventDtoGetParam);
+    List<EventFullDto> getEventsForAdmin(EventDtoGetParam eventDtoGetParam);
 }

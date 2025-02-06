@@ -34,8 +34,15 @@ public class PrivateEventController {
     }
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<EventShortDto> getEventsForUser(@ModelAttribute EventDtoGetParam eventDtoGetParam) {
-        return eventService.getEventsForUser(eventDtoGetParam);
+    public List<EventShortDto> getEventsForUser(@ModelAttribute EventDtoGetParam prm,
+                                                HttpServletRequest request) {
+        return eventService.getEventsForUser(prm);
+    }
+    @GetMapping("/{eventId}")
+    @ResponseStatus(HttpStatus.OK)
+    public EventFullDto getEventForUserById(@ModelAttribute EventDtoGetParam prm,
+                                            HttpServletRequest request)  {
+        return eventService.getEventByIdForUser(prm);
     }
 
 

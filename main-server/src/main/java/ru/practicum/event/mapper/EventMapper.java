@@ -32,4 +32,6 @@ public interface EventMapper {
     Event toEntity(NewEventDto newEventDto);
 
     List<EventShortDto> toEventShortDto(List<Event> events);
+    List<EventFullDto> toEventFullDto(List<Event> events);
+
 }
