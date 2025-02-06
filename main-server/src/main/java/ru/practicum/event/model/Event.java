@@ -14,7 +14,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,32 +51,30 @@ public class Event {
     @Column(name = "title")
     private String title;
     @Column(name = "annotation")
-    @Size(min = 20, max = 2000)
     private String annotation;
     @Column(name = "description")
-    @Size(min = 20, max = 7000)
     private String description;
     @Column(name = "confirmed_requests")
-    private int confirmedRequests;
-    @Column(name = "participant_limit")
-    private int participantLimit;
+    private int confirmedRequests; //Количество одобренных заявок на участие в данном событии
+    @Column(name = "participant_limit") //Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
+    private int participantLimit; //
     @OneToMany(mappedBy = "event")
-    private List<View> views;
+    private List<View> views; //просмотры события
     @Column(name = "request_moderation")
-    private boolean requestModeration = true;
+    private boolean requestModeration = true; //Нужна ли пре-модерация заявок на участие
     @NotNull
     private Boolean paid;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "created_on")
-    private LocalDateTime createdOn; //+
+    private LocalDateTime createdOn; //Дата и время создания события
     @TimeAtLeastTwoHours
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "event_date")
-    private LocalDateTime eventDate; //+
+    private LocalDateTime eventDate; //Дата и время на которые намечено событие
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "published_on")
-    private LocalDateTime publishedOn; //+
+    private LocalDateTime publishedOn; //Дата и время публикации события
     @Enumerated(EnumType.STRING)
     @Column(name = "state")
-    private State state;//+
+    private State state;
 }

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.exception.NotFoundException;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.user.dto.UsersDtoGetParam;
 import ru.practicum.user.mapper.UserMapper;
@@ -17,6 +19,7 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -46,7 +49,7 @@ public class UserServiceImpl implements UserService {
         } else {
             log.info("Запрос пользователей по предикату с пагинацией: from={}, size={}, predicate={}",
                     usersDtoGetParam.getFrom(), usersDtoGetParam.getSize(), predicate);
-                    users = userRepository.findAll(predicate, pageRequest).getContent();
+            users = userRepository.findAll(predicate, pageRequest).getContent();
         }
 
         return users.stream()
@@ -81,7 +84,7 @@ public class UserServiceImpl implements UserService {
      * Формирует предикат для фильтрации пользователей по идентификаторам.
      *
      * @param usersDtoGetParam объект с параметрами фильтрации
-     * @param user        Q-класс пользователя
+     * @param user             Q-класс пользователя
      * @return предикат для фильтрации или null, если список идентификаторов пуст
      */
     private Predicate userPredicate(UsersDtoGetParam usersDtoGetParam, QUser user) {
@@ -90,5 +93,10 @@ public class UserServiceImpl implements UserService {
         }
 
         return user.id.in(usersDtoGetParam.getIds());
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден"));
     }
 }

@@ -66,4 +66,9 @@ public class CategoryServiceImpl implements CategoryService {
             throw new DataAlreadyInUseException("Категория с таким именем уже существует.");
         }
     }
+
+    public Category getCategory(Long id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Категория с ID = " + id + " не найдена."));
+    }
 }
