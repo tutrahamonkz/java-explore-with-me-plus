@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.exception.DataAlreadyInUseException;
 import ru.practicum.exception.NotFoundException;
 
 import java.time.LocalDateTime;
@@ -48,6 +49,18 @@ public class ErrorHandler {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ResponseEntity<ErrorResponse> response = getResponseEntity(status, "Запрос составлен некорректно",
                 e.getMessage(), nowTime);
+        logging(e, status, nowTime);
+
+        return response;
+    }
+
+
+    @ExceptionHandler(DataAlreadyInUseException.class)
+    public ResponseEntity<ErrorResponse> handleDataAlreadyInUseException(DataAlreadyInUseException e) {
+        String nowTime = LocalDateTime.now().format(FORMATTER);
+        HttpStatus status = HttpStatus.BAD_REQUEST; // возможно статус должен быть другим
+        ResponseEntity<ErrorResponse> response = getResponseEntity(status,
+                "Исключение, связанное с нарушением целостности данных", e.getMessage(), nowTime);
         logging(e, status, nowTime);
 
         return response;
