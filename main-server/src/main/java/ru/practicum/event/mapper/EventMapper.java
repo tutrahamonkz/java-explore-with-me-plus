@@ -1,11 +1,16 @@
 package ru.practicum.event.mapper;
 
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.model.Event;
+import ru.practicum.event.model.UpdateEventAdminRequest;
+import ru.practicum.event.model.UpdateEventUserRequest;
 
 import java.util.List;
 
@@ -34,4 +39,11 @@ public interface EventMapper {
     List<EventShortDto> toEventShortDto(List<Event> events);
     List<EventFullDto> toEventFullDto(List<Event> events);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE) //игнорирование полей c null
+    @Mapping(target = "category.id", source = "category")
+    void updateFromAdmin(UpdateEventAdminRequest rq, @MappingTarget Event event); //@MappingTarget указывает что целевой объект, в который будут копироваться значения, уже существует и будет обновлен
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "category.id", source = "category")
+    void updateFromUser(UpdateEventUserRequest rq, @MappingTarget Event event);
 }

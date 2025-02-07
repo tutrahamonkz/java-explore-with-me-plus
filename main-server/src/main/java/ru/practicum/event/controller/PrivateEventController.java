@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import ru.practicum.event.dto.EventDtoGetParam;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
+import ru.practicum.event.model.UpdateEventUserRequest;
 import ru.practicum.event.service.EventService;
 
 import java.util.List;
@@ -32,17 +34,25 @@ public class PrivateEventController {
                                  @RequestBody @Valid NewEventDto newEventDto) {
         return eventService.addEvent(userId, newEventDto);
     }
+
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public List<EventShortDto> getEventsForUser(@ModelAttribute EventDtoGetParam prm,
-                                                HttpServletRequest request) {
+                                                HttpServletRequest rqt) {
         return eventService.getEventsForUser(prm);
     }
+
     @GetMapping("/{eventId}")
-    @ResponseStatus(HttpStatus.OK)
     public EventFullDto getEventForUserById(@ModelAttribute EventDtoGetParam prm,
-                                            HttpServletRequest request)  {
+                                            HttpServletRequest rqt) {
         return eventService.getEventByIdForUser(prm);
+    }
+
+    @PatchMapping("/{eventId}")
+    public EventFullDto updateEvent(@PathVariable Long userId,
+                                    @PathVariable Long eventId,
+                                    @RequestBody @Valid UpdateEventUserRequest rq,
+                                    HttpServletRequest rqt) {
+        return eventService.updateEventByUser(userId, eventId, rq);
     }
 
 

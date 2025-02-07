@@ -8,8 +8,10 @@ import ru.practicum.event.model.Event;
 
 
 import java.util.List;
+import java.util.Optional;
+
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPredicateExecutor<Event> {
-
+    Optional<Event> findByIdAndInitiatorId(Long eventId, Long userId);
 
 }

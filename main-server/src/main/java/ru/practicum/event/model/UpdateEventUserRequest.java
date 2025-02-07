@@ -1,45 +1,36 @@
-package ru.practicum.event.dto;
+package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.event.dto.LocationDto;
+import ru.practicum.event.model.State;
 import ru.practicum.event.validate.TimeAtLeastTwoHours;
 
 import java.time.LocalDateTime;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewEventDto {
-    @NotBlank
+public class UpdateEventUserRequest {
     @Size(min = 20, max = 2000)
     private String annotation;
-    @NotNull
     private Long category;
-    @NotBlank
     @Size(min = 20, max = 7000)
     private String description;
-    @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TimeAtLeastTwoHours
     private LocalDateTime eventDate;
-    @NotNull
     private LocationDto location;
-    @Builder.Default
-    private Boolean paid = false;
+    private Boolean paid;
     @PositiveOrZero
-    @Builder.Default
-    private Integer participantLimit = 0;
-    @Builder.Default
-    private Boolean requestModeration = true;
-    @NotBlank
+    private Integer participantLimit;
+    private Boolean requestModeration;
+    private StateAction stateAction;
     @Size(min = 3, max = 120)
     private String title;
 }

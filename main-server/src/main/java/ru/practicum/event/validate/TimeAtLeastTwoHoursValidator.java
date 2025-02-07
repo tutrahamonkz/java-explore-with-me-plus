@@ -9,7 +9,9 @@ public class TimeAtLeastTwoHoursValidator implements ConstraintValidator<TimeAtL
 
     @Override
     public boolean isValid(LocalDateTime value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
         return value.isAfter(LocalDateTime.now().plusHours(2));
-
     }
 }
