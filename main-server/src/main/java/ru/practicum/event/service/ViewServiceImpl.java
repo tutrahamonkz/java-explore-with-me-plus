@@ -47,6 +47,7 @@ public class ViewServiceImpl implements ViewService {
             viewRepository.saveAll(viewsToSave);
         }
     }
+
     @Override
     public void saveView(Event ev, HttpServletRequest rqt) {
         log.info("Сохранение просмотра для ip {} и события {}", rqt.getRemoteAddr(), ev);

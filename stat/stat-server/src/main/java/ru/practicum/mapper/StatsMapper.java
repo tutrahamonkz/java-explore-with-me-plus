@@ -12,6 +12,7 @@ import ru.practicum.model.Stats;
 public interface StatsMapper {
     @Mapping(target = "hits", ignore = true)
     StatsDto toDto(Stats stats);
+
     @Mapping(target = "id", ignore = true)
     Stats toEntity(HitDto hitDto);
 }

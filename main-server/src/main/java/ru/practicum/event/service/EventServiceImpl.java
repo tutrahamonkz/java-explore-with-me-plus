@@ -13,7 +13,6 @@ import ru.practicum.category.service.CategoryService;
 import ru.practicum.event.dto.EventDtoGetParam;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
-import ru.practicum.event.dto.LocationDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.mapper.LocationMapper;
@@ -25,10 +24,10 @@ import ru.practicum.event.model.StateAction;
 import ru.practicum.event.model.UpdateEventAdminRequest;
 import ru.practicum.event.model.UpdateEventUserRequest;
 import ru.practicum.event.repository.EventRepository;
-import ru.practicum.event.repository.LocationRepository;
 import ru.practicum.exception.ConflictStateException;
 import ru.practicum.exception.ConflictTimeException;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.ValidationException;
 import ru.practicum.user.service.UserService;
 
 
@@ -42,7 +41,6 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
-    private final LocationRepository locationRepository;
     private final LocationService locationService;
     private final CategoryService categoryService;
     private final UserService userService;
@@ -74,8 +72,8 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getEventByIdForUser(EventDtoGetParam prm) {
         Predicate predicate = event.initiator.id.eq(prm.getUserId())
                 .and(event.id.eq(prm.getEventId()));
-        Event ev = eventRepository.findOne(predicate).
-                orElseThrow(() -> new NotFoundException(
+        Event ev = eventRepository.findOne(predicate)
+                .orElseThrow(() -> new NotFoundException(
                         String.format("Событие с id %d для пользователя с id %d не найдено.",
                                 prm.getEventId(), prm.getUserId())));
         log.info("Получение события с id {}  для пользователя с id {}", prm.getEventId(), prm.getUserId());
@@ -101,7 +99,10 @@ public class EventServiceImpl implements EventService {
             predicate = ExpressionUtils.and(predicate, event.eventDate.between(prm.getRangeStart(), prm.getRangeEnd()));
         }
         PageRequest pageRequest = PageRequest.of(prm.getFrom(), prm.getSize());
-        List<Event> events = eventRepository.findAll(predicate, pageRequest).getContent();
+        List<Event> events;
+        events = (predicate == null)
+                ? eventRepository.findAll(pageRequest).getContent()
+                : eventRepository.findAll(predicate, pageRequest).getContent();
         log.info("Получение списка событий администратором с параметрами {} и предикатом {}", prm, predicate);
         return mp.toEventFullDto(events);
     }
@@ -109,8 +110,8 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventFullDto updateEventByAdmin(Long id, UpdateEventAdminRequest rq) {
-        Event ev = eventRepository.findById(id).
-                orElseThrow(() -> new NotFoundException(
+        Event ev = eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(
                         String.format("Событие с id %d не найдено.", id)));
         if ((rq.getStateAction() == StateAction.PUBLISH_EVENT && ev.getState() != State.PENDING) ||
                 (rq.getStateAction() == StateAction.REJECT_EVENT && ev.getState() != State.PUBLISHED)) {
@@ -119,12 +120,9 @@ public class EventServiceImpl implements EventService {
                             "Невозможно опубликовать событие, так как текущий статус не PENDING"
                             : "Нельзя отменить публикацию, так как событие уже опубликовано");
         }
-        /*if (rq.getLocation() != null) {
+        if (rq.getLocation() != null) {
             Location sLk = locationService.getLocation(lmp.toLocation(rq.getLocation()));
             ev.setLocation(sLk);
-        }*/
-        if (rq.getLocation() != null) {
-            ev.setLocation(lmp.toLocation(rq.getLocation()));
         }
         mp.updateFromAdmin(rq, ev);
         ev.setState(rq.getStateAction() == StateAction.PUBLISH_EVENT ? State.PUBLISHED : State.CANCELED);
@@ -137,8 +135,8 @@ public class EventServiceImpl implements EventService {
         if (rq.getEventDate() != null && rq.getEventDate().isBefore(LocalDateTime.now().plusHours(2L))) {
             throw new ConflictTimeException("Время не может быть раньше, через два часа от текущего момента");
         }
-        Event ev = eventRepository.findByIdAndInitiatorId(eventId, userId).
-                orElseThrow(() -> new NotFoundException(
+        Event ev = eventRepository.findByIdAndInitiatorId(eventId, userId)
+                .orElseThrow(() -> new NotFoundException(
                         String.format("Событие с id %d для пользователя с id %d не найдено.", eventId, userId)));
         if (ev.getState() == State.PUBLISHED) {
             throw new ConflictStateException("Изменить можно только неопубликованное событие");
@@ -150,13 +148,9 @@ public class EventServiceImpl implements EventService {
                 default -> throw new IllegalArgumentException("Неизвестный статус: " + rq.getStateAction());
             }
         }
-        /*if (rq.getLocation() != null) {
-            ev.setLocation(locationService.getLocation(lmp.toLocation(rq.getLocation())));
-        }*/
         if (rq.getLocation() != null) {
-            ev.setLocation(lmp.toLocation(rq.getLocation()));
+            ev.setLocation(locationService.getLocation(lmp.toLocation(rq.getLocation())));
         }
-
         mp.updateFromUser(rq, ev);
         return mp.toEventFullDto(eventRepository.save(ev));
     }
@@ -175,6 +169,9 @@ public class EventServiceImpl implements EventService {
             predicate = ExpressionUtils.and(predicate, event.paid.eq(prm.getPaid()));
         }
         if (prm.getRangeStart() != null && prm.getRangeEnd() != null) {
+            if (prm.getRangeStart().isAfter(prm.getRangeEnd())) {
+                throw new ValidationException("Дата начала позже даты окончания");
+            }
             predicate = ExpressionUtils.and(predicate, event.eventDate.between(prm.getRangeStart(), prm.getRangeEnd()));
         } else {
             predicate = ExpressionUtils.and(predicate, event.eventDate.gt(LocalDateTime.now())); //TODO: проверить
@@ -193,15 +190,17 @@ public class EventServiceImpl implements EventService {
         }
         PageRequest pageRequest = PageRequest.of(prm.getFrom(), prm.getSize(), sort);
         List<Event> events = eventRepository.findAll(predicate, pageRequest).getContent();
-        viewService.saveViews(events, rqt);
+        if (!events.isEmpty()) {
+            viewService.saveViews(events, rqt);
+        }
         return mp.toEventShortDto(events);
     }
 
     @Override
     public EventFullDto getPublicEventById(Long id, HttpServletRequest rqt) {
         Predicate predicate = event.state.eq(State.PUBLISHED).and(event.id.eq(id));
-        Event ev = eventRepository.findOne(predicate).
-                orElseThrow(() -> new NotFoundException(
+        Event ev = eventRepository.findOne(predicate)
+                .orElseThrow(() -> new NotFoundException(
                         String.format("Событие с id %d не найдено.", id)));
         viewService.saveView(ev, rqt);
         return mp.toEventFullDto(ev);

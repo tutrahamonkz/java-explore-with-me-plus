@@ -8,10 +8,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.event.dto.LocationDto;
-import ru.practicum.event.model.State;
 import ru.practicum.event.validate.TimeAtLeastTwoHours;
 
 import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor

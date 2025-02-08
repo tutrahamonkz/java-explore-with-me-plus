@@ -11,6 +11,7 @@ import ru.practicum.exception.ConflictStateException;
 import ru.practicum.exception.ConflictTimeException;
 import ru.practicum.exception.DataAlreadyInUseException;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.ValidationException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -77,6 +78,7 @@ public class ErrorHandler {
         logging(e, status, nowTime);
         return response;
     }
+
     @ExceptionHandler(ConflictTimeException.class)
     public ResponseEntity<ErrorResponse> handleConflictEventTimeException(ConflictTimeException e) {
         String nowTime = LocalDateTime.now().format(FORMATTER);
@@ -86,6 +88,17 @@ public class ErrorHandler {
         logging(e, status, nowTime);
         return response;
     }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidationException(ValidationException e) {
+        String nowTime = LocalDateTime.now().format(FORMATTER);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ResponseEntity<ErrorResponse> response = getResponseEntity(status,
+                "Исключение, связанное  валидацией данных", e.getMessage(), nowTime);
+        logging(e, status, nowTime);
+        return response;
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
         String nowTime = LocalDateTime.now().format(FORMATTER);

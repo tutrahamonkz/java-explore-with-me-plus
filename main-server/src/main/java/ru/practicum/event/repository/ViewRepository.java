@@ -8,7 +8,7 @@ import java.util.List;
 
 
 public interface ViewRepository extends JpaRepository<View, Long> {
-    List<View> findByEventInAndIp(List<Event> events , String ip);
-    boolean existsByEventIdAndIp(Long eventId, String ip);
+    List<View> findByEventInAndIp(List<Event> events, String ip);
 
+    boolean existsByEventIdAndIp(Long eventId, String ip);
 }

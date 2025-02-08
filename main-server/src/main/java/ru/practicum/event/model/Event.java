@@ -22,8 +22,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.validate.TimeAtLeastTwoHours;
 import ru.practicum.user.model.User;

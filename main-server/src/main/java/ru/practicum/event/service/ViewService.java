@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface ViewService {
     void saveViews(List<Event> events, HttpServletRequest rqt);
+
     void saveView(Event ev, HttpServletRequest rqt);
 }

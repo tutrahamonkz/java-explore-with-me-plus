@@ -12,6 +12,7 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CategoryMapper {
     Category toCategory(CategoryDto categoryDto);
+
     @Mapping(target = "id", ignore = true)
     Category toCategory(NewCategoryDto newCategoryDto);
 

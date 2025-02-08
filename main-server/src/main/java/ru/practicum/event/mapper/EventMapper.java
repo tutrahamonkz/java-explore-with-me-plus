@@ -22,7 +22,6 @@ public interface EventMapper {
     EventShortDto toEventShortDto(Event event);
 
     @Mapping(target = "views", expression = "java(event.getViews() != null ? event.getViews().size() : 0)")
-
     EventFullDto toEventFullDto(Event event);
 
     @Mapping(target = "category.id", source = "category")
@@ -37,9 +36,11 @@ public interface EventMapper {
     Event toEntity(NewEventDto newEventDto);
 
     List<EventShortDto> toEventShortDto(List<Event> events);
+
     List<EventFullDto> toEventFullDto(List<Event> events);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE) //игнорирование полей c null
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    //игнорирование полей c null
     @Mapping(target = "category.id", source = "category")
     void updateFromAdmin(UpdateEventAdminRequest rq, @MappingTarget Event event); //@MappingTarget указывает что целевой объект, в который будут копироваться значения, уже существует и будет обновлен
 

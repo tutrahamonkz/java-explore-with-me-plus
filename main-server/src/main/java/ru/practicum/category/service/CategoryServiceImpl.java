@@ -24,7 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
-        log.info("Добавление новой категории {}", newCategoryDto );
+        log.info("Добавление новой категории {}", newCategoryDto);
         checkExists(newCategoryDto.getName());
         Category newCategory = categoryMapper.toCategory(newCategoryDto);
         Category created = categoryRepository.save(newCategory);

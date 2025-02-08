@@ -9,5 +9,6 @@ import ru.practicum.event.model.Location;
 public interface LocationMapper {
     @Mapping(target = "id", ignore = true)
     Location toLocation(LocationDto locationDto);
+
     LocationDto toLocationDto(Location location);
 }
