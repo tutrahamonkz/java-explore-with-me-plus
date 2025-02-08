@@ -1,10 +1,12 @@
 package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,6 +22,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.validate.TimeAtLeastTwoHours;
 import ru.practicum.user.model.User;
@@ -46,7 +50,7 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User initiator;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL}) //при сохранении event,сохранится location
     @JoinColumn(name = "location_id")
     private Location location;
     @NotBlank
@@ -60,7 +64,7 @@ public class Event {
     private int confirmedRequests; //Количество одобренных заявок на участие в данном событии
     @Column(name = "participant_limit") //Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
     private int participantLimit; //
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", fetch = FetchType.EAGER) //
     private List<View> views; //просмотры события
     @Column(name = "request_moderation")
     @Builder.Default

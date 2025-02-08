@@ -18,4 +18,5 @@ public interface EventService {
     EventFullDto updateEventByAdmin(Long id, UpdateEventAdminRequest rq);
     EventFullDto updateEventByUser(Long userId, Long eventId, UpdateEventUserRequest rq);
     List<EventShortDto> getPublicEvents(EventDtoGetParam prm, HttpServletRequest rqt);
+    EventFullDto getPublicEventById(Long id, HttpServletRequest rqt);
 }

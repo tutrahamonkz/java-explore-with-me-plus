@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "categories")
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

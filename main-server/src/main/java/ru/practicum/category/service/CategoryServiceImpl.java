@@ -1,6 +1,7 @@
 package ru.practicum.category.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.category.dto.CategoryDto;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
@@ -22,6 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
+        log.info("Добавление новой категории {}", newCategoryDto );
         checkExists(newCategoryDto.getName());
         Category newCategory = categoryMapper.toCategory(newCategoryDto);
         Category created = categoryRepository.save(newCategory);
@@ -56,6 +59,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto getCategoryById(long catId) {
+        log.info("Поиск категории по id {}", catId);
         Category finded = categoryRepository.findById(catId).orElseThrow(() ->
                 new NotFoundException("Категория с ID = " + catId + " не найдена."));
         return categoryMapper.toCategoryDto(finded);
