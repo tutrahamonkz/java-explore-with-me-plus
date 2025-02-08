@@ -1,6 +1,7 @@
 package ru.practicum.category.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import ru.practicum.category.dto.CategoryDto;
 import ru.practicum.category.dto.NewCategoryDto;
@@ -12,6 +13,7 @@ import java.util.List;
 public interface CategoryMapper {
     Category toCategory(CategoryDto categoryDto);
 
+    @Mapping(target = "id", ignore = true)
     Category toCategory(NewCategoryDto newCategoryDto);
 
     CategoryDto toCategoryDto(Category category);
