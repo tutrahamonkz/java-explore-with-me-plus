@@ -96,6 +96,7 @@ public class EventServiceImpl implements EventService {
             predicate = ExpressionUtils.and(predicate, event.category.id.in(prm.getCategories()));
         }
         if (prm.getRangeStart() != null && prm.getRangeEnd() != null) {
+            dateValid(prm.getRangeStart(), prm.getRangeEnd());
             predicate = ExpressionUtils.and(predicate, event.eventDate.between(prm.getRangeStart(), prm.getRangeEnd()));
         }
         PageRequest pageRequest = PageRequest.of(prm.getFrom(), prm.getSize());
@@ -169,9 +170,7 @@ public class EventServiceImpl implements EventService {
             predicate = ExpressionUtils.and(predicate, event.paid.eq(prm.getPaid()));
         }
         if (prm.getRangeStart() != null && prm.getRangeEnd() != null) {
-            if (prm.getRangeStart().isAfter(prm.getRangeEnd())) {
-                throw new ValidationException("Дата начала позже даты окончания");
-            }
+            dateValid(prm.getRangeStart(), prm.getRangeEnd());
             predicate = ExpressionUtils.and(predicate, event.eventDate.between(prm.getRangeStart(), prm.getRangeEnd()));
         } else {
             predicate = ExpressionUtils.and(predicate, event.eventDate.gt(LocalDateTime.now())); //TODO: проверить
@@ -206,5 +205,10 @@ public class EventServiceImpl implements EventService {
         return mp.toEventFullDto(ev);
     }
 
+    private void dateValid(LocalDateTime start, LocalDateTime end) {
+        if (start.isAfter(end)) {
+            throw new ValidationException("Дата начала события позже даты окончания");
+        }
+    }
 }
 

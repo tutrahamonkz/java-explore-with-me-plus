@@ -1,6 +1,5 @@
 package ru.practicum.event.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,24 +35,19 @@ public class PrivateEventController {
     }
 
     @GetMapping
-    public List<EventShortDto> getEventsForUser(@ModelAttribute EventDtoGetParam prm,
-                                                HttpServletRequest rqt) {
+    public List<EventShortDto> getEventsForUser(@ModelAttribute EventDtoGetParam prm) {
         return eventService.getEventsForUser(prm);
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto getEventForUserById(@ModelAttribute EventDtoGetParam prm,
-                                            HttpServletRequest rqt) {
+    public EventFullDto getEventForUserById(@ModelAttribute EventDtoGetParam prm) {
         return eventService.getEventByIdForUser(prm);
     }
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(@PathVariable Long userId,
                                     @PathVariable Long eventId,
-                                    @RequestBody @Valid UpdateEventUserRequest rq,
-                                    HttpServletRequest rqt) {
+                                    @RequestBody @Valid UpdateEventUserRequest rq) {
         return eventService.updateEventByUser(userId, eventId, rq);
     }
-
-
 }

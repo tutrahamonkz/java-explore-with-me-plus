@@ -1,6 +1,5 @@
 package ru.practicum.event.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,15 +25,13 @@ public class AdminEventController {
     private final EventService eventService;
 
     @GetMapping
-    public List<EventFullDto> getEvents(@ModelAttribute @Valid EventDtoGetParam prm,
-                                        HttpServletRequest rqt) {
+    public List<EventFullDto> getEvents(@ModelAttribute @Valid EventDtoGetParam prm) {
         return eventService.getEventsForAdmin(prm);
     }
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(@PathVariable Long eventId,
-                                    @RequestBody @Valid UpdateEventAdminRequest rq,
-                                    HttpServletRequest rqt) {
+                                    @RequestBody @Valid UpdateEventAdminRequest rq) {
         return eventService.updateEventByAdmin(eventId,rq);
     }
 }
