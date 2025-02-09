@@ -56,7 +56,7 @@ public class RequestServiceImpl implements RequestService {
         RequestStatus status = RequestStatus.PENDING;
         if (event.getParticipantLimit() == 0) {
             status = RequestStatus.CONFIRMED;
-        } else if (!event.isRequestModeration()) {
+        } else if (!event.getRequestModeration()) {
             status = RequestStatus.CONFIRMED;
         }
 
@@ -151,7 +151,7 @@ public class RequestServiceImpl implements RequestService {
     private void handleConfirmedRequests(Event event, List<Request> foundRequests, EventRequestStatusUpdateResult result, List<ParticipationRequestDto> confirmed, List<ParticipationRequestDto> rejected) {
         int confirmedRequests = getConfirmedRequests(event.getId());
         int participantLimit = event.getParticipantLimit();
-        if (participantLimit == 0 || !event.isRequestModeration()) {
+        if (participantLimit == 0 || !event.getRequestModeration()) {
             result.setConfirmedRequests(requestMapper.toDtoList(foundRequests));
             return;
         }

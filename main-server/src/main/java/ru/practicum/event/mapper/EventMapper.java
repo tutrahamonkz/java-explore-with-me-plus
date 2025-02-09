@@ -18,10 +18,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {LocationMapper.class})
 public interface EventMapper {
     //target - поле на выходе, source на входе
-    @Mapping(target = "views", expression = "java(event.getViews() == null ? 0 : event.getViews().size())")
     EventShortDto toEventShortDto(Event event);
 
-    @Mapping(target = "views", expression = "java(event.getViews() != null ? event.getViews().size() : 0)")
     EventFullDto toEventFullDto(Event event);
 
     @Mapping(target = "category.id", source = "category")
