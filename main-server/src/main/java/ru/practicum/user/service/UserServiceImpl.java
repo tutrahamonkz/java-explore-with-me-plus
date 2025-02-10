@@ -64,6 +64,7 @@ public class UserServiceImpl implements UserService {
      * @return созданный DTO пользователя
      */
     @Override
+    @Transactional
     public UserDto create(UserDto userDto) {
         log.info("Создание нового пользователя с email: {}", userDto.getEmail());
         return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
@@ -75,6 +76,7 @@ public class UserServiceImpl implements UserService {
      * @param id идентификатор пользователя
      */
     @Override
+    @Transactional
     public void delete(Long id) {
         log.info("Удаление пользователя с id: {}", id);
         userRepository.deleteById(id);
