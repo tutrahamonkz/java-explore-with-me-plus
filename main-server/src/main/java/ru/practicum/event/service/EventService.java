@@ -5,6 +5,7 @@ import ru.practicum.event.dto.EventDtoGetParam;
 import ru.practicum.event.dto.EventFullDto;
 import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
+import ru.practicum.event.model.Event;
 import ru.practicum.event.model.UpdateEventAdminRequest;
 import ru.practicum.event.model.UpdateEventUserRequest;
 
@@ -26,4 +27,6 @@ public interface EventService {
     List<EventShortDto> getPublicEvents(EventDtoGetParam prm, HttpServletRequest rqt);
 
     EventFullDto getPublicEventById(Long id, HttpServletRequest rqt);
+
+    List<Event> getAllEventByIds(List<Long> ids);
 }

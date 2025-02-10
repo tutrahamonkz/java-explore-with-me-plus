@@ -16,20 +16,13 @@ import ru.practicum.event.dto.EventShortDto;
 import ru.practicum.event.dto.NewEventDto;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.mapper.LocationMapper;
-import ru.practicum.event.model.Event;
-import ru.practicum.event.model.Location;
-import ru.practicum.event.model.QEvent;
-import ru.practicum.event.model.State;
-import ru.practicum.event.model.StateAction;
-import ru.practicum.event.model.UpdateEventAdminRequest;
-import ru.practicum.event.model.UpdateEventUserRequest;
+import ru.practicum.event.model.*;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictStateException;
 import ru.practicum.exception.ConflictTimeException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
 import ru.practicum.user.service.UserService;
-
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -203,6 +196,11 @@ public class EventServiceImpl implements EventService {
                         String.format("Событие с id %d не найдено.", id)));
         viewService.saveView(ev, rqt);
         return mp.toEventFullDto(ev);
+    }
+
+    @Override
+    public List<Event> getAllEventByIds(List<Long> ids) {
+        return eventRepository.findAllById(ids);
     }
 
     private void dateValid(LocalDateTime start, LocalDateTime end) {

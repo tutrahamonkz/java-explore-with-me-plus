@@ -1,14 +1,14 @@
 package ru.practicum.compilation.dto;
 
 import lombok.Getter;
-import ru.practicum.event.model.Event;
+import ru.practicum.event.dto.EventShortDto;
 
 import java.util.List;
 
 @Getter
 public class CompilationDto {
 
-    private List<Event> events;
+    private List<EventShortDto> events;
 
     private Long id;
 

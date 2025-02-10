@@ -13,6 +13,7 @@ public interface CompilationMapper {
 
     CompilationMapper INSTANCE = Mappers.getMapper(CompilationMapper.class);
 
+    @Mapping(target = "events", ignore = true)
     CompilationDto toDto(Compilation compilation);
 
     @Mapping(target = "events", ignore = true)

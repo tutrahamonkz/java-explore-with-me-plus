@@ -12,7 +12,7 @@ import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.model.QCompilation;
 import ru.practicum.compilation.repository.CompilationRepository;
-import ru.practicum.event.repository.EventRepository;
+import ru.practicum.event.service.EventService;
 import ru.practicum.exception.NotFoundException;
 
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.List;
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
-    private final EventRepository eventRepository;
+    private final EventService eventService;
 
     /**
      * Возвращает подборку событий.
@@ -79,7 +79,7 @@ public class CompilationServiceImpl implements CompilationService {
                 adminCompilationDto.getTitle(), adminCompilationDto.getEvents().size());
         Compilation compilation = CompilationMapper.INSTANCE.toEntity(adminCompilationDto);
         if (!adminCompilationDto.getEvents().isEmpty()) {
-            compilation.setEvents(eventRepository.findAllById(adminCompilationDto.getEvents()));
+            compilation.setEvents(eventService.getAllEventByIds(adminCompilationDto.getEvents()));
         }
         return CompilationMapper.INSTANCE.toDto(compilationRepository.save(compilation));
     }
@@ -97,7 +97,7 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = getById(id);
         CompilationMapper.INSTANCE.updateCompilationFromDto(adminCompilationDto, compilation);
         if (!adminCompilationDto.getEvents().isEmpty()) {
-            compilation.setEvents(eventRepository.findAllById(adminCompilationDto.getEvents()));
+            compilation.setEvents(eventService.getAllEventByIds(adminCompilationDto.getEvents()));
         }
         return CompilationMapper.INSTANCE.toDto(compilationRepository.save(compilation));
     }
