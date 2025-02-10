@@ -80,12 +80,18 @@ public class CompilationServiceImpl implements CompilationService {
      */
     @Override
     public CompilationDto create(AdminCompilationDto adminCompilationDto) {
-        log.info("Создание новой подборки событий с названием: {} и количеством событий: {}",
-                adminCompilationDto.getTitle(), adminCompilationDto.getEvents().size());
         Compilation compilation = CompilationMapper.INSTANCE.toEntity(adminCompilationDto);
+        if (adminCompilationDto.getEvents() == null) {
+            log.info("Создание новой подборки событий с названием: {}",
+                    adminCompilationDto.getTitle());
+        }
+
+
         if (!adminCompilationDto.getEvents().isEmpty()) {
             compilation.setEvents(eventService.getAllEventByIds(adminCompilationDto.getEvents()));
         }
+        log.info("Создание новой подборки событий с названием: {} и количеством событий: {}",
+                adminCompilationDto.getTitle(), adminCompilationDto.getEvents().size());
         Compilation newCompilation = compilationRepository.save(compilation);
 
         return toDtoWithEventShortDto(newCompilation);
@@ -102,12 +108,13 @@ public class CompilationServiceImpl implements CompilationService {
     public CompilationDto update(AdminCompilationDto adminCompilationDto, Long id) {
         log.info("Обновление подборки событий с id: {}", id);
         Compilation compilation = getById(id);
-        CompilationMapper.INSTANCE.updateCompilationFromDto(adminCompilationDto, compilation);
+        Compilation updateCompilation = CompilationMapper.INSTANCE
+                .updateCompilationFromDto(adminCompilationDto, compilation);
         if (!adminCompilationDto.getEvents().isEmpty()) {
-            compilation.setEvents(eventService.getAllEventByIds(adminCompilationDto.getEvents()));
+            updateCompilation.setEvents(eventService.getAllEventByIds(adminCompilationDto.getEvents()));
         }
-        Compilation updatedCompilation = compilationRepository.save(compilation);
-        return toDtoWithEventShortDto(updatedCompilation);
+
+        return toDtoWithEventShortDto(compilationRepository.save(updateCompilation));
     }
 
     /**
@@ -118,11 +125,10 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public void delete(Long id) {
         log.info("Удаление подборки событий с id: {}", id);
-        if (compilationRepository.existsById(id)) {
-            compilationRepository.deleteById(id);
-        } else {
+        if (!compilationRepository.existsById(id)) {
             throw new NotFoundException("Не удалось найти подборку событий с id: " + id);
         }
+        compilationRepository.deleteById(id);
     }
 
     private Compilation getById(Long id) {
@@ -138,10 +144,14 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private CompilationDto toDtoWithEventShortDto(Compilation compilation) {
+        CompilationDto cd = CompilationMapper.INSTANCE.toDto(compilation);
+        if (compilation.getEvents() == null) {
+            cd.setEvents(List.of());
+            return cd;
+        }
         List<EventShortDto> events = compilation.getEvents().stream()
                 .map(eventMapper::toEventShortDto)
                 .toList();
-        CompilationDto cd = CompilationMapper.INSTANCE.toDto(compilation);
         cd.setEvents(events);
         return cd;
     }
