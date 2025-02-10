@@ -21,7 +21,7 @@ public class PublicCompilationController {
     @GetMapping
     public ResponseEntity<List<CompilationDto>> getCompilations(@ModelAttribute @Valid CompilationDtoGetParam getParam) {
         return ResponseEntity.status(HttpStatus.OK)
-                .body( compilationService.getAll(getParam));
+                .body(compilationService.getAll(getParam));
     }
 
     @GetMapping("/{compId}")

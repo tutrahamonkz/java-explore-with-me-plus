@@ -152,6 +152,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public List<EventShortDto> getPublicEvents(EventDtoGetParam prm, HttpServletRequest rqt) {
         Predicate predicate = event.state.eq(State.PUBLISHED);
         if (prm.getText() != null && !prm.getText().isEmpty()) {
@@ -191,6 +192,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto getPublicEventById(Long id, HttpServletRequest rqt) {
         Predicate predicate = event.state.eq(State.PUBLISHED).and(event.id.eq(id));
         Event ev = eventRepository.findOne(predicate)
