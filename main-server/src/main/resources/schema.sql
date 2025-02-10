@@ -27,7 +27,6 @@ CREATE TABLE IF NOT EXISTS events (
     title VARCHAR(120),
     annotation VARCHAR(2000),
     description VARCHAR(7000),
-    confirmed_requests INTEGER NOT NULL,
     participant_limit INTEGER NOT NULL,
     request_moderation BOOLEAN NOT NULL,
     paid BOOLEAN NOT NULL,
@@ -53,3 +52,4 @@ CREATE TABLE IF NOT EXISTS views (
      status VARCHAR(50) NOT NULL,
      CONSTRAINT UNIQUE_EVENT_REQUESTER UNIQUE (requester_id, event_id)
  );
+ CREATE INDEX IF NOT EXISTS idx_requests_event_id_status ON requests (event_id, status);

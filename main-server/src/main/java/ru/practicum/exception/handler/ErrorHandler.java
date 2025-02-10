@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.exception.ConditionsNotMetException;
 import ru.practicum.exception.ConflictStateException;
 import ru.practicum.exception.ConflictTimeException;
 import ru.practicum.exception.DataAlreadyInUseException;
@@ -61,7 +62,7 @@ public class ErrorHandler {
     @ExceptionHandler(DataAlreadyInUseException.class)
     public ResponseEntity<ErrorResponse> handleDataAlreadyInUseException(DataAlreadyInUseException e) {
         String nowTime = LocalDateTime.now().format(FORMATTER);
-        HttpStatus status = HttpStatus.BAD_REQUEST; // возможно статус должен быть другим
+        HttpStatus status = HttpStatus.CONFLICT; // возможно статус должен быть другим
         ResponseEntity<ErrorResponse> response = getResponseEntity(status,
                 "Исключение, связанное с нарушением целостности данных", e.getMessage(), nowTime);
         logging(e, status, nowTime);
@@ -101,6 +102,16 @@ public class ErrorHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+        String nowTime = LocalDateTime.now().format(FORMATTER);
+        HttpStatus status = HttpStatus.CONFLICT;
+        ResponseEntity<ErrorResponse> response = getResponseEntity(status,
+                "Исключение, связанное с неизвестным значением аргумента", e.getMessage(), nowTime);
+        logging(e, status, nowTime);
+        return response;
+    }
+
+    @ExceptionHandler(ConditionsNotMetException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(ConditionsNotMetException e) {
         String nowTime = LocalDateTime.now().format(FORMATTER);
         HttpStatus status = HttpStatus.CONFLICT;
         ResponseEntity<ErrorResponse> response = getResponseEntity(status,
