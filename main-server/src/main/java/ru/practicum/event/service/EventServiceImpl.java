@@ -108,18 +108,20 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NotFoundException(
                         String.format("Событие с id %d не найдено.", id)));
         if ((rq.getStateAction() == StateAction.PUBLISH_EVENT && ev.getState() != State.PENDING) ||
-                (rq.getStateAction() == StateAction.REJECT_EVENT && ev.getState() != State.PUBLISHED)) {
+                (rq.getStateAction() == StateAction.REJECT_EVENT && ev.getState() == State.PUBLISHED)) {
             throw new ConflictStateException(
                     (rq.getStateAction() == StateAction.PUBLISH_EVENT) ?
                             "Невозможно опубликовать событие, так как текущий статус не PENDING"
                             : "Нельзя отменить публикацию, так как событие уже опубликовано");
         }
+        ev.setState(State.CANCELED);
         if (rq.getLocation() != null) {
             Location sLk = locationService.getLocation(lmp.toLocation(rq.getLocation()));
             ev.setLocation(sLk);
         }
         mp.updateFromAdmin(rq, ev);
         ev.setState(rq.getStateAction() == StateAction.PUBLISH_EVENT ? State.PUBLISHED : State.CANCELED);
+        log.info("Обновление события с id {} администратором с параметрами {}", id, rq);
         return mp.toEventFullDto(eventRepository.save(ev));
     }
 
