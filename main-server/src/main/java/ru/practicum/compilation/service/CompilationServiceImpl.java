@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilation.dto.AdminCompilationDto;
 import ru.practicum.compilation.dto.CompilationDto;
 import ru.practicum.compilation.dto.CompilationDtoGetParam;
@@ -12,6 +13,8 @@ import ru.practicum.compilation.mapper.CompilationMapper;
 import ru.practicum.compilation.model.Compilation;
 import ru.practicum.compilation.model.QCompilation;
 import ru.practicum.compilation.repository.CompilationRepository;
+import ru.practicum.event.dto.EventShortDto;
+import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.service.EventService;
 import ru.practicum.exception.NotFoundException;
 
@@ -20,10 +23,12 @@ import java.util.List;
 @Slf4j
 @Service
 @AllArgsConstructor
+@Transactional
 public class CompilationServiceImpl implements CompilationService {
 
     private final CompilationRepository compilationRepository;
     private final EventService eventService;
+    private final EventMapper eventMapper;
 
     /**
      * Возвращает подборку событий.
@@ -81,7 +86,9 @@ public class CompilationServiceImpl implements CompilationService {
         if (!adminCompilationDto.getEvents().isEmpty()) {
             compilation.setEvents(eventService.getAllEventByIds(adminCompilationDto.getEvents()));
         }
-        return CompilationMapper.INSTANCE.toDto(compilationRepository.save(compilation));
+        Compilation newCompilation = compilationRepository.save(compilation);
+
+        return toDtoWithEventShortDto(newCompilation);
     }
 
     /**
@@ -99,7 +106,8 @@ public class CompilationServiceImpl implements CompilationService {
         if (!adminCompilationDto.getEvents().isEmpty()) {
             compilation.setEvents(eventService.getAllEventByIds(adminCompilationDto.getEvents()));
         }
-        return CompilationMapper.INSTANCE.toDto(compilationRepository.save(compilation));
+        Compilation updatedCompilation = compilationRepository.save(compilation);
+        return toDtoWithEventShortDto(updatedCompilation);
     }
 
     /**
@@ -127,5 +135,14 @@ public class CompilationServiceImpl implements CompilationService {
             return null;
         }
         return compilation.pinned.eq(param.getPinned());
+    }
+
+    private CompilationDto toDtoWithEventShortDto(Compilation compilation) {
+        List<EventShortDto> events = compilation.getEvents().stream()
+                .map(eventMapper::toEventShortDto)
+                .toList();
+        CompilationDto cd = CompilationMapper.INSTANCE.toDto(compilation);
+        cd.setEvents(events);
+        return cd;
     }
 }
