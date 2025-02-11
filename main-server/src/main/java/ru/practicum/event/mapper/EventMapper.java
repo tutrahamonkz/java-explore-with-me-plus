@@ -1,16 +1,8 @@
 package ru.practicum.event.mapper;
 
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import ru.practicum.event.dto.EventFullDto;
-import ru.practicum.event.dto.EventShortDto;
-import ru.practicum.event.dto.NewEventDto;
+import org.mapstruct.*;
+import ru.practicum.event.dto.*;
 import ru.practicum.event.model.Event;
-import ru.practicum.event.model.UpdateEventAdminRequest;
-import ru.practicum.event.model.UpdateEventUserRequest;
 
 import java.util.List;
 
