@@ -1,6 +1,5 @@
 package ru.practicum.user.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,8 +24,7 @@ public class UserController {
     private final StatClient statClient;
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getUsers(@ModelAttribute @Valid UsersDtoGetParam usersDtoGetParam,
-                                                  HttpServletRequest request) {
+    public ResponseEntity<List<UserDto>> getUsers(@ModelAttribute @Valid UsersDtoGetParam usersDtoGetParam) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(userService.getAll(usersDtoGetParam));
@@ -34,14 +32,14 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto, HttpServletRequest request) {
+    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.create(userDto));
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<String> deleteUser(@PathVariable Long userId, HttpServletRequest request) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         userService.delete(userId);
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
