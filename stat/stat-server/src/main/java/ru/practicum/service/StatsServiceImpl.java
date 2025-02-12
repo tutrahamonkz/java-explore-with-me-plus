@@ -4,11 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.HitDto;
 import ru.practicum.dto.StatsDto;
+import ru.practicum.exception.BadTimeException;
 import ru.practicum.mapper.StatsMapper;
 import ru.practicum.model.Stats;
 import ru.practicum.repository.StatRepository;
 
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,8 +27,11 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public List<StatsDto> getStat(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        if (end == null || start == null) {
+            throw new BadTimeException("The start and the end date cannot be null");
+        }
         if (end.isBefore(start)) {
-            throw new DateTimeException("The end date cannot be earlier than the start date");
+            throw new BadTimeException("The end date cannot be earlier than the start date");
         }
 
         if (uris.isEmpty()) {
