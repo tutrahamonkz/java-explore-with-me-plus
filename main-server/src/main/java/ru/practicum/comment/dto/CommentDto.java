@@ -9,6 +9,8 @@ import ru.practicum.user.dto.UserShortDto;
 import ru.practicum.validation.CreateValidationGroup;
 import ru.practicum.validation.UpdateValidationGroup;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 public class CommentDto {
@@ -16,6 +18,8 @@ public class CommentDto {
     private Long id;
 
     private UserShortDto user;
+
+    private LocalDateTime created = LocalDateTime.now();
 
     @NotNull(groups = CreateValidationGroup.class)
     @Positive(groups = CreateValidationGroup.class)
