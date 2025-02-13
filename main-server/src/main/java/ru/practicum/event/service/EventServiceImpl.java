@@ -204,6 +204,12 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findAllById(ids);
     }
 
+    @Override
+    public Event getPublicEventById(Long id) {
+        return eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдено события с id: " + id));
+    }
+
     private void dateValid(LocalDateTime start, LocalDateTime end) {
         if (start.isAfter(end)) {
             throw new ValidationException("Дата начала события позже даты окончания");
