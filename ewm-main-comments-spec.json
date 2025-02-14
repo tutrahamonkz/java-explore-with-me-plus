@@ -226,16 +226,6 @@
               "type": "integer",
               "format": "int64"
             }
-          },
-          {
-            "description": "id события",
-            "in": "path",
-            "name": "eventId",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
           }
         ],
         "requestBody": {
@@ -611,7 +601,7 @@
             "description": "Текст комментария",
             "example": "Событие понравилось"
           },
-          "event": {
+          "eventId": {
             "uniqueItems": true,
             "type": "integer",
             "description": "id идентификатора события",
