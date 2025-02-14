@@ -96,18 +96,8 @@ CREATE TABLE IF NOT EXISTS comments (
     user_id BIGINT NOT NULL,
     event_id BIGINT NOT NULL,
     created TIMESTAMP NOT NULL,
-    description VARCHAR(50) NOT NULL,
+    description VARCHAR(5000) NOT NULL,
     CONSTRAINT pk_comments PRIMARY KEY (id),
     CONSTRAINT fk_comments_users FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT fk_comments_events FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE
-);
-
-CREATE TABLE if NOT EXISTS comments_users_events (
-    comment_id BIGINT NOT NULL,
-    event_id BIGINT NOT NULL,
-    user_id BIGINT NOT NULL,
-    CONSTRAINT pk_comments_users_events PRIMARY KEY (comment_id, user_id, event_id),
-    CONSTRAINT fk_comments_users_events_comments FOREIGN KEY(comment_id) REFERENCES comments(id) ON DELETE CASCADE,
-    CONSTRAINT fk_comments_users_events_to_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_comments_users_events_to_events FOREIGN KEY(event_id) REFERENCES events(id) ON DELETE CASCADE
 );

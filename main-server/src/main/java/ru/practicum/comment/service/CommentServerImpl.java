@@ -37,10 +37,10 @@ public class CommentServerImpl implements CommentService {
     public CommentDto createComment(Long userId, CommentDto commentDto) {
         User user = userService.getUserById(userId);
         Event event = eventService.getPublicEventById(commentDto.getEventId());
-        Comment comment = getCommentById(commentDto.getId());
-        log.info("Create comment: {}", comment);
+        Comment comment = CommentMapper.INSTANCE.toEntity(commentDto);
         comment.setUser(user);
         comment.setEvent(event);
+        log.info("Create comment: {}", comment);
         return CommentMapper.INSTANCE.toDto(commentRepository.save(comment));
     }
 
@@ -48,6 +48,7 @@ public class CommentServerImpl implements CommentService {
     public CommentDto updateComment(CommentDto commentDto) {
         Event event = eventService.getPublicEventById(commentDto.getEventId());
         Comment comment = getCommentById(commentDto.getId());
+        CommentMapper.INSTANCE.updateDto(commentDto, comment);
         log.info("Admin update comment: {}", comment);
         comment.setEvent(event);
         return CommentMapper.INSTANCE.toDto(commentRepository.save(comment));
@@ -58,6 +59,7 @@ public class CommentServerImpl implements CommentService {
         User user = userService.getUserById(userId);
         Event event = eventService.getPublicEventById(commentDto.getEventId());
         Comment comment = getCommentById(commentDto.getId());
+        CommentMapper.INSTANCE.updateDto(commentDto, comment);
         log.info("Update comment: {}", comment);
         comment.setUser(user);
         comment.setEvent(event);

@@ -28,14 +28,10 @@ public class Comment {
     private LocalDateTime created;
 
     @ManyToOne
-    @JoinTable(name = "comments_events",
-            joinColumns = @JoinColumn(name = "comment_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id"))
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     @ManyToOne
-    @JoinTable(name = "comments_users",
-            joinColumns = @JoinColumn(name = "comment_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

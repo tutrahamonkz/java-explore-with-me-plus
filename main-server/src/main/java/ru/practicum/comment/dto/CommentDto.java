@@ -23,7 +23,7 @@ public class CommentDto {
 
     @NotNull(groups = CreateValidationGroup.class)
     @Positive(groups = CreateValidationGroup.class)
-    private Long EventId;
+    private Long eventId;
 
     @NotBlank(groups = {CreateValidationGroup.class, UpdateValidationGroup.class})
     private String description;
