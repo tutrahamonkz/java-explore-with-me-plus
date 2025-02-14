@@ -586,12 +586,12 @@
             "description": "Дата и время создания комментария (в формате \"yyyy-MM-dd HH:mm:ss\")",
             "example": "2024-12-31 15:10:05"
           },
-		  "created": {
+		  "eventId": {
 			"type": "integer",
             "description": "Идентификатор",
             "format": "int64",
             "example": 3
-		  }
+		  },
           "description": {
             "type": "string",
             "description": "Текст комментария",
