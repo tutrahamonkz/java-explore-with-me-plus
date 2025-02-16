@@ -87,6 +87,13 @@ public class CommentServerImpl implements CommentService {
         }
     }
 
+    @Override
+    public CommentDto getComment(Long userId, Long commentId) {
+        userService.getUserById(userId);
+        log.info("Get comment by id: {}", commentId);
+        return CommentMapper.INSTANCE.toDto(getCommentById(commentId));
+    }
+
     private Comment getCommentById(Long commentId) {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Не найден комментарий с id: " + commentId));

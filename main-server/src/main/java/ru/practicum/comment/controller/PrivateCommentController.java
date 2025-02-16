@@ -37,4 +37,10 @@ public class PrivateCommentController {
     public void deleteComment(@PathVariable Long userId, @PathVariable Long commentId) {
         commentService.deleteComment(userId, commentId);
     }
+
+    @GetMapping("/{commentId}")
+    public ResponseEntity<CommentDto> getComment(@PathVariable Long userId, @PathVariable Long commentId) {
+        return ResponseEntity.status(200)
+                .body(commentService.getComment(userId, commentId));
+    }
 }
