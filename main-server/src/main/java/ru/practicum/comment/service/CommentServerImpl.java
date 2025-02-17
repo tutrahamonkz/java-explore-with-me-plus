@@ -69,7 +69,7 @@ public class CommentServerImpl implements CommentService {
     @Override
     public void deleteComment(Long userId, Long commentId) {
         userService.getUserById(userId);
-        if(commentRepository.existsById(commentId)) {
+        if (commentRepository.existsById(commentId)) {
             log.info("Delete comment: {}", commentId);
             commentRepository.deleteById(commentId);
         } else {
@@ -79,7 +79,7 @@ public class CommentServerImpl implements CommentService {
 
     @Override
     public void deleteComment(Long commentId) {
-        if(commentRepository.existsById(commentId)) {
+        if (commentRepository.existsById(commentId)) {
             log.info("Admin delete comment: {}", commentId);
             commentRepository.deleteById(commentId);
         } else {
