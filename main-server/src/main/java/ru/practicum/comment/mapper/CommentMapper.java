@@ -18,6 +18,7 @@ public interface CommentMapper {
 
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "eventId", ignore = true)
+    @Mapping(target = "parentId", ignore = true)
     List<CommentDto> toDtos(List<Comment> comments);
 
     @Mapping(target = "id", ignore = true)
@@ -25,5 +26,5 @@ public interface CommentMapper {
     Comment toEntity(CommentDto commentDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateDto(CommentDto commentDto,@MappingTarget Comment comment);
+    void updateDto(CommentDto commentDto, @MappingTarget Comment comment);
 }

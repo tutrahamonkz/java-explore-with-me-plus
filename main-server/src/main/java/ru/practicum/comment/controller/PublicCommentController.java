@@ -23,4 +23,10 @@ public class PublicCommentController {
         return ResponseEntity.status(200)
                 .body(commentService.getComments(eventId));
     }
+
+    @GetMapping("/{commentId}/replies")
+    public ResponseEntity<List<CommentDto>> getReplies(@PathVariable Long commentId) {
+        return ResponseEntity.status(200)
+                .body(commentService.getReplies(commentId));
+    }
 }

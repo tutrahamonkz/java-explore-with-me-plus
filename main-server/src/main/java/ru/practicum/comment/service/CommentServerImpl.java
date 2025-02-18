@@ -113,4 +113,23 @@ public class CommentServerImpl implements CommentService {
         log.info("Create reply to comment: {}", comment);
         return CommentMapper.INSTANCE.toDto(commentRepository.save(comment));
     }
+
+    @Override
+    public List<CommentDto> getReplies(Long commentId) {
+        log.info("Get replies for commentId: {}", commentId);
+        return CommentMapper.INSTANCE.toDtos(commentRepository.findAllByParentId(commentId));
+    }
+
+    @Override
+    public void deleteReply(Long commentId, Long replyId) {
+        log.info("Deleting reply {} for comment {}", replyId, commentId);
+        Comment reply = commentRepository.findById(replyId)
+                .orElseThrow(() -> new NotFoundException("Reply not found with id: " + replyId));
+
+        if (!reply.getParent().getId().equals(commentId)) {
+            throw new NotFoundException("Reply with id " + replyId + " does not belong to comment " + commentId);
+        }
+
+        commentRepository.deleteById(replyId);
+    }
 }

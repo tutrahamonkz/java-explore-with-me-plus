@@ -21,4 +21,8 @@ public interface CommentService {
     void deleteComment(Long userId, Long commentId);
 
     void deleteComment(Long commentId);
+
+    List<CommentDto> getReplies(Long commentId);
+
+    void deleteReply(Long commentId, Long replyId);
 }

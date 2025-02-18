@@ -42,4 +42,8 @@ public class Comment {
 
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> replies;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Comment parent; // Новый атрибут - родительский комментарий
 }

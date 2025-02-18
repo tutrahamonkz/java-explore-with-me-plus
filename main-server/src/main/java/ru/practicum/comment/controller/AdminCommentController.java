@@ -28,4 +28,10 @@ public class AdminCommentController {
     public void deleteComment(@PathVariable Long commentId) {
         commentService.deleteComment(commentId);
     }
+
+
+    @DeleteMapping("/{commentId}/reply/{replyId}")
+    public void deleteReply(@PathVariable Long commentId, @PathVariable Long replyId) {
+        commentService.deleteReply(commentId, replyId);
+    }
 }

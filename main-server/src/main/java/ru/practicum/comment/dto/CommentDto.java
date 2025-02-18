@@ -35,4 +35,6 @@ public class CommentDto {
 
     private List<CommentDto> replies;
 
+    private Long parentId;
+
 }
