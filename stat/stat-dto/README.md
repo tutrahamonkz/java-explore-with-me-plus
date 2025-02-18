@@ -5,7 +5,8 @@
 ## Особенности
 
 - **Валидация**: Использованы аннотации для проверки валидности полей.
-- **Ломбок**: Используется Lombok для генерации getter-ов, setter-ов и других методов (`@Getter`, `@Setter`, `@Builder`, `@NoArgsConstructor`, `@AllArgsConstructor`).
+- **Ломбок**: Используется Lombok для генерации getter-ов, setter-ов и других методов (`@Getter`, `@Setter`, `@Builder`,
+  `@NoArgsConstructor`, `@AllArgsConstructor`).
 
 ### Добавление зависимости
 
