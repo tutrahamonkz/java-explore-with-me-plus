@@ -13,6 +13,7 @@ public interface CommentMapper {
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
 
     @Mapping(target = "eventId", source = "event.id")
+    @Mapping(target = "parentCommentId", source = "parentComment.id")
     CommentDto toDto(Comment comment);
 
     @Mapping(target = "user", ignore = true)
@@ -20,6 +21,7 @@ public interface CommentMapper {
     List<CommentDto> toDtos(List<Comment> comments);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "parentComment", ignore = true)
     Comment toEntity(CommentDto commentDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

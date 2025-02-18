@@ -98,4 +98,19 @@ public class CommentServerImpl implements CommentService {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Не найден комментарий с id: " + commentId));
     }
+
+    @Override
+    public CommentDto createReply(Long userId, Long parentCommentId, CommentDto commentDto) {
+        User user = userService.getUserById(userId);
+        Comment parentComment = commentRepository.findById(parentCommentId)
+                .orElseThrow(() -> new NotFoundException("Parent comment not found: " + parentCommentId));
+
+        Comment comment = CommentMapper.INSTANCE.toEntity(commentDto);
+        comment.setUser(user);
+        comment.setEvent(parentComment.getEvent());
+        comment.setParentComment(parentComment);
+
+        log.info("Create reply to comment: {}", comment);
+        return CommentMapper.INSTANCE.toDto(commentRepository.save(comment));
+    }
 }
