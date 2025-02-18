@@ -12,6 +12,8 @@ public interface CommentService {
 
     CommentDto createComment(Long userId, CommentDto commentDto);
 
+    CommentDto createReply(Long userId, Long parentCommentId, CommentDto commentDto);
+
     CommentDto updateComment(CommentDto commentDto);
 
     CommentDto updateComment(Long userId, CommentDto commentDto);

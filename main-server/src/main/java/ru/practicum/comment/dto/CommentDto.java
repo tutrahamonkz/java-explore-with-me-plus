@@ -11,6 +11,7 @@ import ru.practicum.validation.CreateValidationGroup;
 import ru.practicum.validation.UpdateValidationGroup;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,4 +30,9 @@ public class CommentDto {
 
     @NotBlank(groups = {CreateValidationGroup.class, UpdateValidationGroup.class})
     private String description;
+
+    private Long parentCommentId;
+
+    private List<CommentDto> replies;
+
 }
