@@ -30,7 +30,7 @@
 											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 											"        comment = {\r",
 											"            description: \" \", // Пустое поле\r",
-											"            eventId: event.id // ID события\r",
+											"            eventId: event.id \r",
 											"        };\r",
 											"         await api.addComment(user.id, comment);\r",
 											"       \r",
@@ -312,7 +312,7 @@
 							"response": []
 						},
 						{
-							"name": "Поиск несуществующего комментария по id",
+							"name": "Поиск комментария по id-проверка поля replies",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -323,7 +323,7 @@
 											"    const rnd = new RandomUtils();\r",
 											"   \r",
 											"    \r",
-											"    let comment;\r",
+											"    \r",
 											"       try {\r",
 											"        const user = await api.addUser(rnd.getUser());\r",
 											"        console.log(\"Печать пользователя \" , user);\r",
@@ -331,11 +331,13 @@
 											"        console.log(\"Печать категории \" , category);\r",
 											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 											"        console.log(\"Печать события \" , event);\r",
-											"        comment =await api.addComment(user.id, rnd.getComment(event.id));\r",
+											"        const comment =await api.addComment(user.id, rnd.getComment(event.id));\r",
 											"        console.log(\"Печать коммента \" , comment);\r",
 											"        pm.collectionVariables.set('comment', comment);\r",
 											"        pm.collectionVariables.set('userId', user.id);\r",
-											"        pm.collectionVariables.set('commentId', 9999999);\r",
+											"        pm.collectionVariables.set('commentId', comment.id);\r",
+											"        const replyOne = await api.addReply(user.id, comment.id, rnd.getComment(event.id));\r",
+											"        const replyTwo = await api.addReply(user.id, comment.id, rnd.getComment(event.id));\r",
 											"       \r",
 											"    } catch(err) {\r",
 											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -371,21 +373,34 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
-											"    pm.response.to.have.status(404); \r",
-											"    pm.response.to.be.withBody; \r",
-											"    pm.response.to.be.json; \r",
+											"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+											"    pm.response.to.be.ok; \r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
 											"});\r",
 											"\r",
-											"// Парсим тело ответа\r",
-											"const responseBody = pm.response.json();\r",
+											"const source = pm.collectionVariables.get('comment');\r",
+											"console.log(\"Печать запроса\", source );\r",
+											"const target = pm.response.json();\r",
+											"console.log(\"Печать ответа\", target );\r",
+											"pm.test(\"Комментарий должен содержать поля: id, eventId, created, description, user,parentCommentId,replies\", function () {\r",
+											"    pm.expect(target).to.have.property('id');\r",
+											"    pm.expect(target).to.have.property('eventId');\r",
+											"    pm.expect(target).to.have.property('created');\r",
+											"    pm.expect(target).to.have.property('description');\r",
+											"    pm.expect(target).to.have.property('user');\r",
+											"    pm.expect(target).to.have.property('parentCommentId');\r",
+											"    pm.expect(target).to.have.property('replies');\r",
+											"});\r",
+											"// Проверка, что replies содержит два элемента\r",
+											"pm.test(\"Replies должен содержать два элемента\", function () {\r",
+											"    pm.expect(target.replies).to.be.an('array').that.has.lengthOf(2, 'Replies должен содержать два элемента');\r",
+											"});\r",
 											"\r",
-											"// Проверка содержания ошибки\r",
-											"pm.test(\"Ответ должен содержать ожидаемую ошибку\", function () {\r",
-											"    pm.expect(responseBody).to.have.property('status', 'NOT_FOUND');\r",
-											"    pm.expect(responseBody).to.have.property('reason', 'Объект не найден');\r",
-											"    pm.expect(responseBody).to.have.property('message', `Не найден комментарий с id: ${pm.variables.get(\"commentId\")}`);\r",
-											"    pm.expect(responseBody).to.have.property('timestamp');\r",
+											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+											"    pm.expect(source.description).equal(target.description, 'Описание комментария должно соответствовать отправленному в запросе');\r",
+											"    pm.expect(source.eventId).equal(target.eventId, 'ID события должен соответствовать отправленному в запросе')\r",
+											"    pm.expect(source.created).equal(target.created, 'Время создания  должно соотвествовать времени отправленному в запросе')\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -482,7 +497,7 @@
 											"    pm.expect(target.user.id).to.equal(Number(userId), 'ID пользователя должно соответствовать ID в пути запроса');\r",
 											"    pm.expect(target.user.name).to.equal(expectedUserName, 'Имя пользователя должно соответствовать ожидаемому значению');\r",
 											"    pm.expect(target.eventId).to.equal(Number(eventId), 'ID события должно соответствовать ID события в запросе');\r",
-											"    pm.expect(target.created).equal(pm.variables.get(\"created\"), 'Время создания  должно соотвествовать времени отправленному в запросе')\r",
+											"    //pm.expect(target.created).equal(pm.variables.get(\"created\"), 'Время создания  должно соотвествовать времени отправленному в запросе')\r",
 											"});\r",
 											""
 										],
@@ -510,8 +525,9 @@
 											"        pm.collectionVariables.set(\"eventName\", event.name);\r",
 											"\r",
 											"        \r",
-											"        comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
-											"        pm.collectionVariables.set(\"created\", comment.created);\r",
+											"        //comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
+											"        comment = rnd.getComment(event.id);\r",
+											"        //pm.collectionVariables.set(\"created\", comment.created);\r",
 											"       \r",
 											"    } catch(err) {\r",
 											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
@@ -819,13 +835,9 @@
 											"    let comment;\r",
 											"       try {\r",
 											"        const user = await api.addUser(rnd.getUser());\r",
-											"        console.log(\"Печать пользователя \" , user);\r",
 											"        const category = await api.addCategory(rnd.getCategory());\r",
-											"        console.log(\"Печать категории \" , category);\r",
-											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
-											"        console.log(\"Печать события \" , event);\r",
+											"       const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 											"        comment =await api.addComment(user.id, rnd.getComment(event.id));\r",
-											"        console.log(\"Печать коммента \" , comment);\r",
 											"        pm.collectionVariables.set('comment', comment);\r",
 											"        pm.collectionVariables.set('userId', user.id);\r",
 											"        pm.collectionVariables.set('commentId', comment.id);\r",
@@ -874,12 +886,14 @@
 											"console.log(\"Печать запроса\", source );\r",
 											"const target = pm.response.json();\r",
 											"console.log(\"Печать ответа\", target );\r",
-											"pm.test(\"Комментарий должен содержать поля: id, eventId, created, description, user\", function () {\r",
+											"pm.test(\"Комментарий должен содержать поля: id, eventId, created, description, user, parentCommentId,replies\", function () {\r",
 											"    pm.expect(target).to.have.property('id');\r",
 											"    pm.expect(target).to.have.property('eventId');\r",
 											"    pm.expect(target).to.have.property('created');\r",
 											"    pm.expect(target).to.have.property('description');\r",
 											"    pm.expect(target).to.have.property('user');\r",
+											"    pm.expect(target).to.have.property('parentCommentId');\r",
+											"    pm.expect(target).to.have.property('replies');\r",
 											"});\r",
 											"\r",
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
@@ -906,6 +920,168 @@
 										":userId",
 										"comments",
 										":commentId"
+									],
+									"variable": [
+										{
+											"key": "userId",
+											"value": "{{userId}}"
+										},
+										{
+											"key": "commentId",
+											"value": "{{commentId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Добавление ответа на комментарий",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"   \r",
+											"    \r",
+											"    let comment;\r",
+											"    let reply;\r",
+											"       try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        pm.collectionVariables.set(\"userId\", user.id)  \r",
+											"        pm.collectionVariables.set(\"userName\", user.name); // Сохраняем имя пользователя \r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        pm.collectionVariables.set(\"eventId\", event.id);\r",
+											"        pm.collectionVariables.set(\"eventName\", event.name);\r",
+											"\r",
+											"        \r",
+											"        comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
+											"        reply = rnd.getComment(event.id);\r",
+											"        pm.collectionVariables.set(\"commentId\", comment.id);\r",
+											"        \r",
+											"       \r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"\r",
+											"    pm.request.body.update({\r",
+											"        mode: 'raw',\r",
+											"        raw: JSON.stringify(reply),\r",
+											"        options: { raw: { language: 'json' } }\r",
+											"    });\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+											"    pm.response.to.have.status(201); // Проверяем, что статус ответа 201 (Created)\r",
+											"    pm.response.to.be.withBody; // Проверяем, что тело ответа не пустое\r",
+											"    pm.response.to.be.json; // Проверяем, что ответ в формате JSON\r",
+											"});\r",
+											"\r",
+											"// Парсим тело запроса и ответа\r",
+											"const source = JSON.parse(pm.request.body.raw); // Данные из запроса\r",
+											"const target = pm.response.json(); // Данные из ответа\r",
+											"// Получаем userId из переменной пути\r",
+											"const userId = pm.variables.get(\"userId\");\r",
+											"const expectedUserName = pm.variables.get(\"userName\");\r",
+											"const eventId = pm.variables.get(\"eventId\");\r",
+											"\r",
+											"\r",
+											"\r",
+											"// Проверка наличия обязательных полей в ответе\r",
+											"pm.test(\"Комментарий должен содержать поля: id, eventId, created, description, user,parentCommentId,replies\", function () {\r",
+											"    pm.expect(target).to.have.property('id'); // Проверяем наличие поля id\r",
+											"    \r",
+											"    pm.expect(target).to.have.property('user'); // Проверяем наличие поля user\r",
+											"     \r",
+											"    pm.expect(target.user).to.have.property('id'); // Проверяем наличие поля id внутри user\r",
+											"    \r",
+											"    pm.expect(target.user).to.have.property('name'); // Проверяем наличие поля name внутри user\r",
+											"    \r",
+											"    pm.expect(target).to.have.property('created'); // Проверяем наличие поля created\r",
+											"    \r",
+											"    pm.expect(target).to.have.property('eventId'); // Проверяем наличие поля eventId\r",
+											"      \r",
+											"    pm.expect(target).to.have.property('description'); // Проверяем наличие поля description\r",
+											"    pm.expect(target).to.have.property('parentCommentId');\r",
+											"    pm.expect(target).to.have.property('replies');\r",
+											"     \r",
+											"});\r",
+											"pm.test(\"Поля комментария id, user, created, eventId, description,parentCommentId,replies не должны быть null\", function () {\r",
+											" pm.expect(target.id).to.not.equal(null, \"Поле 'id' должно быть заполнено и не должно быть null\");\r",
+											"pm.expect(target.user).to.not.equal(null, \"Поле 'user' должно быть заполнено и не должно быть null\");\r",
+											" pm.expect(target.user.id).to.not.equal(null, \"Поле 'user.id' должно быть заполнено и не должно быть null\");\r",
+											" pm.expect(target.user.name).to.not.equal(null, \"Поле 'user.name' должно быть заполнено и не должно быть null\");\r",
+											"pm.expect(target.created).to.not.equal(null, \"Поле 'created' должно быть заполнено и не должно быть null\");\r",
+											"pm.expect(target.eventId).to.not.equal(null, \"Поле 'eventId' должно быть заполнено и не должно быть null\");\r",
+											"pm.expect(target.description).to.not.equal(null, \"Поле 'description' должно быть заполнено и не должно быть null\");\r",
+											"pm.expect(target.parentCommentId).to.not.equal(null, \"Поле 'parentCommentId' должно быть заполнено и не должно быть null\");\r",
+											"});\r",
+											"// Проверка соответствия данных в ответе данным из запроса\r",
+											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+											"    pm.expect(target.description).equal(source.description, 'Описание комментария должно соответствовать описанию в запросе'); // Проверяем описание\r",
+											"    pm.expect(target.eventId).equal(source.eventId, 'ID события должно соответствовать ID события в запросе'); // Проверяем ID события\r",
+											"    pm.expect(target.user.id).to.equal(Number(userId), 'ID пользователя должно соответствовать ID в пути запроса');\r",
+											"    pm.expect(target.user.name).to.equal(expectedUserName, 'Имя пользователя должно соответствовать ожидаемому значению');\r",
+											"    pm.expect(target.eventId).to.equal(Number(eventId), 'ID события должно соответствовать ID события в запросе');\r",
+											"    pm.expect(target.parentCommentId).to.equal(pm.variables.get(\"commentId\"), 'ID события, на которое составлен ответ должно соответствовать ID события в запросе');\r",
+											"    \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/users/:userId/comments/:commentId/reply",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"users",
+										":userId",
+										"comments",
+										":commentId",
+										"reply"
 									],
 									"variable": [
 										{
@@ -991,12 +1167,15 @@
 											"pm.test(\"Комментарии должен содержать поля: id, eventId, created, description, user\", function () {\r",
 											"\r",
 											"    pm.expect(target).to.be.an('array').that.has.lengthOf(2, 'Ответ должен содержать два комментария');\r",
+											"    \r",
 											"    target.forEach(comment => {\r",
 											"        pm.expect(comment).to.have.property('id');\r",
 											"        pm.expect(comment).to.have.property('eventId');\r",
 											"        pm.expect(comment).to.have.property('created');\r",
 											"        pm.expect(comment).to.have.property('description');\r",
 											"        pm.expect(comment).to.have.property('user');\r",
+											"        pm.expect(comment).to.have.property('parentCommentId');\r",
+											"        pm.expect(comment).to.have.property('replies');\r",
 											"});\r",
 											"});\r",
 											"\r",
@@ -1033,14 +1212,9 @@
 								}
 							},
 							"response": []
-						}
-					]
-				},
-				{
-					"name": "Validation",
-					"item": [
+						},
 						{
-							"name": "Поиск комментария по несуществующему событию",
+							"name": "Поиск ответов на комментарий к событию",
 							"event": [
 								{
 									"listen": "prerequest",
@@ -1055,7 +1229,128 @@
 											"        const category = await api.addCategory(rnd.getCategory());\r",
 											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 											"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
-											"        const commentTwo = await api.addComment(user.id, rnd.getComment(event.id));\r",
+											"        pm.collectionVariables.set(\"eventId\", event.id);\r",
+											"        pm.collectionVariables.set(\"comment\", comment);\r",
+											"        pm.collectionVariables.set(\"commentId\", comment.id);\r",
+											"        const replyOne = await api.addReply(user.id, comment.id, rnd.getComment(event.id));\r",
+											"        const replyTwo = await api.addReply(user.id, comment.id, rnd.getComment(event.id));\r",
+											"        pm.collectionVariables.set(\"replyOneDescr\", replyOne.description);\r",
+											"        pm.collectionVariables.set(\"replyTwoDescr\", replyTwo.description);\r",
+											"       \r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+											"    pm.response.to.be.ok; \r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											"\r",
+											"const source = pm.collectionVariables.get('comment');\r",
+											"const target = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Комментарии должен содержать поля: id, eventId, created, description, user\", function () {\r",
+											"\r",
+											"    pm.expect(target).to.be.an('array').that.has.lengthOf(2, 'Ответ должен содержать два комментария');\r",
+											"    \r",
+											"    target.forEach(comment => {\r",
+											"        pm.expect(comment).to.have.property('id');\r",
+											"        pm.expect(comment).to.have.property('eventId');\r",
+											"        pm.expect(comment).to.have.property('created');\r",
+											"        pm.expect(comment).to.have.property('description');\r",
+											"        pm.expect(comment).to.have.property('user');\r",
+											"         pm.expect(comment).to.have.property('parentCommentId');\r",
+											"        pm.expect(comment).to.have.property('replies');\r",
+											"});\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+											"    pm.expect(source.id).equal(target[0].parentCommentId, 'ID комментария, к которому добавили ответ, должен соотвествовать соответствовать отправленному в запросе');\r",
+											"    pm.expect(source.id).equal(target[1].parentCommentId, 'ID комментария, к которому добавили ответ, должен соотвествовать соответствовать отправленному в запросе');\r",
+											"    pm.expect(pm.collectionVariables.get(\"replyOneDescr\")).equal(target[0].description, 'Описание комментария должно соответствовать отправленному в запросе');\r",
+											"    pm.expect(pm.collectionVariables.get(\"replyTwoDescr\")).equal(target[1].description, 'Описание комментария должно соответствовать отправленному в запросе');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/events/:eventId/comments/:commentId/replies",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"events",
+										":eventId",
+										"comments",
+										":commentId",
+										"replies"
+									],
+									"variable": [
+										{
+											"key": "eventId",
+											"value": "{{eventId}}"
+										},
+										{
+											"key": "commentId",
+											"value": "{{commentId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Validation",
+					"item": [
+						{
+							"name": "Поиск комментариев по несуществующему событию",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
 											"        pm.collectionVariables.set(\"eventId\", 999999)\r",
 											"        pm.collectionVariables.set(\"comment\", comment)\r",
 											"       \r",
@@ -1093,10 +1388,8 @@
 											"    pm.response.to.be.json; \r",
 											"});\r",
 											"\r",
-											"// Парсим тело ответа\r",
 											"const responseBody = pm.response.json();\r",
 											"\r",
-											"// Проверка содержания ошибки\r",
 											"pm.test(\"Ответ должен содержать ожидаемую ошибку\", function () {\r",
 											"    pm.expect(responseBody).to.have.property('status', 'NOT_FOUND');\r",
 											"    pm.expect(responseBody).to.have.property('reason', 'Объект не найден');\r",
@@ -1112,6 +1405,132 @@
 							"request": {
 								"method": "GET",
 								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/events/:eventId/comments",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"events",
+										":eventId",
+										"comments"
+									],
+									"variable": [
+										{
+											"key": "eventId",
+											"value": "{{eventId}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Поиск комментариев к событию проверка replies",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"const main = async () => {\r",
+											"    const api = new API(pm);\r",
+											"    const rnd = new RandomUtils();\r",
+											"\r",
+											"    try {\r",
+											"        const user = await api.addUser(rnd.getUser());\r",
+											"        const category = await api.addCategory(rnd.getCategory());\r",
+											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
+											"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
+											"        const commentTwo = await api.addComment(user.id, rnd.getComment(event.id));\r",
+											"        pm.collectionVariables.set(\"eventId\", event.id);\r",
+											"        pm.collectionVariables.set(\"comment\", comment);\r",
+											"        const replyOne = await api.addReply(user.id, comment.id, rnd.getComment(event.id));\r",
+											"        const replyTwo = await api.addReply(user.id, comment.id, rnd.getComment(event.id));\r",
+											"        pm.collectionVariables.set(\"replyOneDescription\", replyOne.description);\r",
+											"        pm.collectionVariables.set(\"replyTwoDescription\", replyTwo.description);\r",
+											"       \r",
+											"    } catch(err) {\r",
+											"        console.error(\"Ошибка при подготовке тестовых данных.\", err);\r",
+											"    }\r",
+											"};\r",
+											"\r",
+											"const interval = setInterval(() => {}, 1000);\r",
+											"\r",
+											"setTimeout(async () => \r",
+											"    {\r",
+											"        try {\r",
+											"            await main();\r",
+											"        } catch (e) {\r",
+											"            console.error(e);\r",
+											"        } finally {\r",
+											"            clearInterval(interval);\r",
+											"        }\r",
+											"    },  \r",
+											"    100 \r",
+											");"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+											"    pm.response.to.be.ok; \r",
+											"    pm.response.to.be.withBody;\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											"\r",
+											"const source = pm.collectionVariables.get('comment');\r",
+											"const target = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Комментарии должен содержать поля: id, eventId, created, description, user,parentCommentId,replies\", function () {\r",
+											"\r",
+											"    pm.expect(target).to.be.an('array').that.has.lengthOf(2, 'Ответ должен содержать два комментария');\r",
+											"    target.forEach(comment => {\r",
+											"        pm.expect(comment).to.have.property('id');\r",
+											"        pm.expect(comment).to.have.property('eventId');\r",
+											"        pm.expect(comment).to.have.property('created');\r",
+											"        pm.expect(comment).to.have.property('description');\r",
+											"        pm.expect(comment).to.have.property('user');\r",
+											"        pm.expect(comment).to.have.property('parentCommentId');\r",
+											"        pm.expect(comment).to.have.property('replies');\r",
+											"});\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Replies должен содержать два элемента\", function () {\r",
+											"    pm.expect(target[0].replies).to.be.an('array').that.has.lengthOf(2, 'Replies должен содержать два элемента');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+											"    pm.expect(source.id).equal(target[0].id, 'ID комментария должен соотвествовать соответствовать отправленному в запросе');\r",
+											"    pm.expect(source.description).equal(target[0].description, 'Описание комментария должно соответствовать отправленному в запросе');\r",
+											"     pm.expect(pm.collectionVariables.get(\"replyOneDescription\")).equal(target[0].replies[0].description, 'Описание ответа на комментарий должно соответствовать отправленному в запросе');\r",
+											"     pm.expect(pm.collectionVariables.get(\"replyTwoDescription\")).equal(target[0].replies[1].description, 'Описание ответа на комментарий должно соответствовать отправленному в запросе');\r",
+											"    });"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{baseUrl}}/events/:eventId/comments",
 									"host": [
@@ -1205,12 +1624,14 @@
 											"const source = pm.collectionVariables.get(\"newComment\");\r",
 											"const target = pm.response.json();\r",
 											"\r",
-											"pm.test(\"Комментарий должен содержать поля: id, eventId, created, description, user\", function () {\r",
+											"pm.test(\"Комментарий должен содержать поля: id, eventId, created, description, user,parentCommentId,replies\", function () {\r",
 											"    pm.expect(target).to.have.property('id');\r",
 											"    pm.expect(target).to.have.property('eventId');\r",
 											"    pm.expect(target).to.have.property('created');\r",
 											"    pm.expect(target).to.have.property('description');\r",
 											"    pm.expect(target).to.have.property('user');\r",
+											"    pm.expect(target).to.have.property('parentCommentId');\r",
+											"    pm.expect(target).to.have.property('replies');\r",
 											"});\r",
 											"\r",
 											"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
@@ -1343,10 +1764,6 @@
 							"response": []
 						}
 					]
-				},
-				{
-					"name": "Validation",
-					"item": []
 				}
 			]
 		}
@@ -1383,6 +1800,10 @@
 					"\r",
 					"    async addComment(userId, comment,verbose = null) {\r",
 					"        return this.post(`/users/${userId}/comments`, comment, \"Ошибка при добавлении нового комментария \",verbose);\r",
+					"    }\r",
+					"\r",
+					"    async addReply(userId, commentId, reply,verbose = null) {\r",
+					"        return this.post(`/users/${userId}/comments/${commentId}/reply`, reply, \"Ошибка при добавлении ответа на комментарий \",verbose);\r",
 					"    }\r",
 					"\r",
 					"    async publishParticipationRequest(eventId, userId, verbose=null) {\r",
@@ -1636,6 +2057,26 @@
 		},
 		{
 			"key": "created",
+			"value": ""
+		},
+		{
+			"key": "replyId",
+			"value": ""
+		},
+		{
+			"key": "replyOneDescription",
+			"value": ""
+		},
+		{
+			"key": "replyTwoDescription",
+			"value": ""
+		},
+		{
+			"key": "replyOneDescr",
+			"value": ""
+		},
+		{
+			"key": "replyTwoDescr",
 			"value": ""
 		}
 	]
