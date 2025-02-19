@@ -117,19 +117,7 @@ public class CommentServerImpl implements CommentService {
     @Override
     public List<CommentDto> getReplies(Long commentId) {
         log.info("Get replies for commentId: {}", commentId);
-        return CommentMapper.INSTANCE.toDtos(commentRepository.findAllByParentId(commentId));
+        return CommentMapper.INSTANCE.toDtos(commentRepository.findAllByParentCommentId(commentId));
     }
 
-    @Override
-    public void deleteReply(Long commentId, Long replyId) {
-        log.info("Deleting reply {} for comment {}", replyId, commentId);
-        Comment reply = commentRepository.findById(replyId)
-                .orElseThrow(() -> new NotFoundException("Reply not found with id: " + replyId));
-
-        if (!reply.getParent().getId().equals(commentId)) {
-            throw new NotFoundException("Reply with id " + replyId + " does not belong to comment " + commentId);
-        }
-
-        commentRepository.deleteById(replyId);
-    }
-}
+   }
