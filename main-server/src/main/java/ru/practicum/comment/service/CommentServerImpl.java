@@ -30,7 +30,11 @@ public class CommentServerImpl implements CommentService {
     public List<CommentDto> getComments(Long eventId) {
         log.info("Get comments by eventId: {}", eventId);
         eventService.getPublicEventById(eventId);
-        return CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventId(eventId));
+        List<CommentDto> dtos = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventId(eventId));
+        return dtos.stream()
+                // Избегаем дублирования комментариев в ответе
+                .filter((dto) -> dto.getParentCommentId() == null)
+                .toList();
     }
 
     @Override
