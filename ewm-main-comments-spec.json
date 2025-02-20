@@ -213,6 +213,69 @@
         ]
       }
     },
+    "/events/{eventId}/comments/{commentId}/replies": {
+      "get": {
+        "description": "Возвращает все комментарии к комментарию",
+        "operationId": "getComments_3",
+        "parameters": [
+          {
+            "description": "id события",
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "description": "id комментария",
+            "in": "path",
+            "name": "commentId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CommentDto"
+                  }
+                }
+              }
+            },
+            "description": "Комментарии найдены"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "BAD_REQUEST",
+                  "reason": "Incorrectly made request.",
+                  "message": "Failed to convert value of type java.lang.String to required type int; nested exception is java.lang.NumberFormatException: For input string: ad",
+                  "timestamp": "2022-09-07 09:10:50"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Запрос составлен некорректно"
+          }
+        },
+        "summary": "Поиск комментариев на комментарий",
+        "tags": [
+          "Public: Комментарии событий"
+        ]
+      }
+    },
     "/users/{userId}/comments": {
       "post": {
         "operationId": "saveComment",
