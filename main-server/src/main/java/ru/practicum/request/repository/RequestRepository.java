@@ -16,11 +16,11 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
 
     @Query("""
-    SELECT r
-    FROM Request r
-    JOIN Event e ON r.event.id = e.id
-    WHERE e.initiator.id = ?1 AND e.id = ?2
-    """)
+            SELECT r
+            FROM Request r
+            JOIN Event e ON r.event.id = e.id
+            WHERE e.initiator.id = ?1 AND e.id = ?2
+            """)
     List<Request> findAllByInitiatorIdAndEventId(long userId, long eventId);
 
     @Query("select count(r) from Request r where r.event.id = :eventId and r.status = 'CONFIRMED'")

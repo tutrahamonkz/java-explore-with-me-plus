@@ -28,4 +28,5 @@ public class AdminCommentController {
     public void deleteComment(@PathVariable Long commentId) {
         commentService.deleteComment(commentId);
     }
+
 }

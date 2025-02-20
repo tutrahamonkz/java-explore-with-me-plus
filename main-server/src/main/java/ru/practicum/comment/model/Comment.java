@@ -8,6 +8,7 @@ import ru.practicum.event.model.Event;
 import ru.practicum.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,4 +35,11 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_comment_id")
+    private Comment parentComment;
+
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> replies;
 }

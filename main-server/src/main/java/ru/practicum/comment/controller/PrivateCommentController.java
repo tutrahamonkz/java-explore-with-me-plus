@@ -24,6 +24,16 @@ public class PrivateCommentController {
                 .body(commentService.createComment(userId, commentDto));
     }
 
+    @PostMapping("/{commentId}/reply")
+    public ResponseEntity<CommentDto> createReply(@PathVariable Long userId,
+                                                  @PathVariable Long commentId,
+                                                  @RequestBody
+                                                  @Validated(CreateValidationGroup.class) CommentDto commentDto) {
+        return ResponseEntity.status(201)
+                .body(commentService.createReply(userId, commentId, commentDto));
+    }
+
+
     @PatchMapping("/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable Long userId, @PathVariable Long commentId,
                                                     @RequestBody

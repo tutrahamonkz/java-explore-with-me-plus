@@ -30,7 +30,11 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentDto> getComments(Long eventId) {
         log.info("Get comments by eventId: {}", eventId);
         eventService.getPublicEventById(eventId);
-        return CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventId(eventId));
+        List<CommentDto> dtos = CommentMapper.INSTANCE.toDtos(commentRepository.findAllByEventId(eventId));
+        return dtos.stream()
+                // Избегаем дублирования комментариев в ответе
+                .filter((dto) -> dto.getParentCommentId() == null)
+                .toList();
     }
 
     @Override
@@ -98,4 +102,26 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("Не найден комментарий с id: " + commentId));
     }
-}
+
+    @Override
+    public CommentDto createReply(Long userId, Long parentCommentId, CommentDto commentDto) {
+        User user = userService.getUserById(userId);
+        Comment parentComment = commentRepository.findById(parentCommentId)
+                .orElseThrow(() -> new NotFoundException("Parent comment not found: " + parentCommentId));
+
+        Comment comment = CommentMapper.INSTANCE.toEntity(commentDto);
+        comment.setUser(user);
+        comment.setEvent(parentComment.getEvent());
+        comment.setParentComment(parentComment);
+
+        log.info("Create reply to comment: {}", comment);
+        return CommentMapper.INSTANCE.toDto(commentRepository.save(comment));
+    }
+
+    @Override
+    public List<CommentDto> getReplies(Long commentId) {
+        log.info("Get replies for commentId: {}", commentId);
+        return CommentMapper.INSTANCE.toDtos(commentRepository.findAllByParentCommentId(commentId));
+    }
+
+   }

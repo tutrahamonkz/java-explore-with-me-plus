@@ -13,7 +13,12 @@ import ru.practicum.category.service.CategoryService;
 import ru.practicum.event.dto.*;
 import ru.practicum.event.mapper.EventMapper;
 import ru.practicum.event.mapper.LocationMapper;
-import ru.practicum.event.model.*;
+
+import ru.practicum.event.model.Event;
+import ru.practicum.event.model.Location;
+import ru.practicum.event.model.QEvent;
+import ru.practicum.event.model.State;
+import ru.practicum.event.model.StateAction;
 import ru.practicum.event.repository.EventRepository;
 import ru.practicum.exception.ConflictStateException;
 import ru.practicum.exception.ConflictTimeException;

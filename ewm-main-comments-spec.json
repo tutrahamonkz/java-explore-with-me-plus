@@ -213,6 +213,69 @@
         ]
       }
     },
+    "/comments/{commentId}/replies": {
+      "get": {
+        "description": "Возвращает все комментарии к комментарию",
+        "operationId": "getComments_3",
+        "parameters": [
+          {
+            "description": "id события",
+            "in": "path",
+            "name": "eventId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "description": "id комментария",
+            "in": "path",
+            "name": "commentId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CommentDto"
+                  }
+                }
+              }
+            },
+            "description": "Комментарии найдены"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "BAD_REQUEST",
+                  "reason": "Incorrectly made request.",
+                  "message": "Failed to convert value of type java.lang.String to required type int; nested exception is java.lang.NumberFormatException: For input string: ad",
+                  "timestamp": "2022-09-07 09:10:50"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Запрос составлен некорректно"
+          }
+        },
+        "summary": "Поиск комментариев на комментарий",
+        "tags": [
+          "Public: Комментарии событий"
+        ]
+      }
+    },
     "/users/{userId}/comments": {
       "post": {
         "operationId": "saveComment",
@@ -516,6 +579,92 @@
           "Private: Комментарии событий"
         ]
       }
+    },
+    "/users/{userId}/comments/{commentId}/reply": {
+      "post": {
+        "operationId": "saveComment_2",
+        "parameters": [
+          {
+            "description": "id текущего пользователя",
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "description": "id комментария",
+            "in": "path",
+            "name": "commentId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewCommentDto"
+              }
+            }
+          },
+          "description": "данные нового комментария",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentDto"
+                }
+              }
+            },
+            "description": "Комментарий добавлен"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "BAD_REQUEST",
+                  "reason": "Incorrectly made request.",
+                  "message": "Field: description. Error: must not be blank. Value: null",
+                  "timestamp": "2022-09-07 09:10:50"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Запрос составлен некорректно"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "CONFLICT",
+                  "reason": "Integrity constraint has been violated.",
+                  "message": "could not execute statement; SQL [n/a]; constraint [uq_compilation_name]; nested exception is org.hibernate.exception.ConstraintViolationException: could not execute statement",
+                  "timestamp": "2022-09-07 09:10:50"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            },
+            "description": "Нарушение целостности данных"
+          }
+        },
+        "summary": "Добавление нового комментария к комментарию",
+        "tags": [
+          "Private: Комментарии событий"
+        ]
+      }
     }
   },
   "components": {
@@ -630,9 +779,11 @@
         "required": [
           "id",
           "user",
-		  "created",
-		  "eventId",
-          "description"
+          "created",
+          "eventId",
+          "description",
+          "parentCommentId",
+          "replies"
         ],
         "type": "object",
         "properties": {
@@ -645,21 +796,32 @@
           "user": {
             "$ref": "#/components/schemas/UserShortDto"
           },
-		  "created": {
+          "created": {
             "type": "string",
             "description": "Дата и время создания комментария (в формате \"yyyy-MM-dd HH:mm:ss\")",
             "example": "2024-12-31 15:10:05"
           },
-		  "eventId": {
-			"type": "integer",
+          "eventId": {
+            "type": "integer",
             "description": "Идентификатор",
             "format": "int64",
             "example": 3
-		  },
+          },
           "description": {
             "type": "string",
             "description": "Текст комментария",
             "example": "Событие понравилось"
+          },
+          "parentCommentId": {
+            "type": "integer",
+            "description": "Идентификатор родительского комментария",
+            "format": "int64",
+            "example": 3
+          },
+          "replies": {
+            "type": "array",
+            "description": "Комментарии",
+            "example": []
           }
         },
         "description": "Комментарий события"

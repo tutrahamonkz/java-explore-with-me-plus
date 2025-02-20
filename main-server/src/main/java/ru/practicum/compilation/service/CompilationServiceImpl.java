@@ -100,7 +100,7 @@ public class CompilationServiceImpl implements CompilationService {
     /**
      * Обновляет подборку событий по идентификатору.
      *
-     * @param id идентификатор подборки событий
+     * @param id                  идентификатор подборки событий
      * @param adminCompilationDto DTO подборки событий
      * @return обновленный DTO подборки событий
      */

@@ -75,14 +75,14 @@
 											"});\r",
 											"\r",
 											"// Парсим тело ответа\r",
-											"const responseBody = pm.response.json();\r",
+											"let target = pm.response.json();\r",
 											"\r",
 											"// Проверка содержания ошибки\r",
 											"pm.test(\"Ответ должен содержать ожидаемую ошибку\", function () {\r",
-											"    pm.expect(responseBody).to.have.property('status', 'BAD_REQUEST');\r",
-											"    pm.expect(responseBody).to.have.property('reason', 'Запрос составлен некорректно');\r",
-											"    pm.expect(responseBody).to.have.property('message');\r",
-											"    pm.expect(responseBody).to.have.property('timestamp');\r",
+											"    pm.expect(target).to.have.property('status', 'BAD_REQUEST');\r",
+											"    pm.expect(target).to.have.property('reason', 'Запрос составлен некорректно');\r",
+											"    pm.expect(target).to.have.property('message');\r",
+											"    pm.expect(target).to.have.property('timestamp');\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -93,6 +93,15 @@
 							"request": {
 								"method": "POST",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/comments",
 									"host": [
@@ -172,14 +181,14 @@
 											"});\r",
 											"\r",
 											"// Парсим тело ответа\r",
-											"const responseBody = pm.response.json();\r",
+											"let target = pm.response.json();\r",
 											"\r",
 											"// Проверка содержания ошибки\r",
 											"pm.test(\"Ответ должен содержать ожидаемую ошибку\", function () {\r",
-											"    pm.expect(responseBody).to.have.property('status', 'NOT_FOUND');\r",
-											"    pm.expect(responseBody).to.have.property('reason', 'Объект не найден');\r",
-											"    pm.expect(responseBody).to.have.property('message', `Пользователь с id ${pm.variables.get(\"userId\")} не найден`);\r",
-											"    pm.expect(responseBody).to.have.property('timestamp');\r",
+											"    pm.expect(target).to.have.property('status', 'NOT_FOUND');\r",
+											"    pm.expect(target).to.have.property('reason', 'Объект не найден');\r",
+											"    pm.expect(target).to.have.property('message', `Пользователь с id ${pm.variables.get(\"userId\")} не найден`);\r",
+											"    pm.expect(target).to.have.property('timestamp');\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -190,6 +199,15 @@
 							"request": {
 								"method": "POST",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/comments",
 									"host": [
@@ -273,14 +291,14 @@
 											"});\r",
 											"\r",
 											"// Парсим тело ответа\r",
-											"const responseBody = pm.response.json();\r",
+											"let target = pm.response.json();\r",
 											"\r",
 											"// Проверка содержания ошибки\r",
 											"pm.test(\"Ответ должен содержать ожидаемую ошибку\", function () {\r",
-											"    pm.expect(responseBody).to.have.property('status', 'BAD_REQUEST');\r",
-											"    pm.expect(responseBody).to.have.property('reason', 'Запрос составлен некорректно');\r",
-											"    pm.expect(responseBody).to.have.property('message');\r",
-											"    pm.expect(responseBody).to.have.property('timestamp');\r",
+											"    pm.expect(target).to.have.property('status', 'BAD_REQUEST');\r",
+											"    pm.expect(target).to.have.property('reason', 'Запрос составлен некорректно');\r",
+											"    pm.expect(target).to.have.property('message');\r",
+											"    pm.expect(target).to.have.property('timestamp');\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -291,6 +309,15 @@
 							"request": {
 								"method": "POST",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/comments",
 									"host": [
@@ -687,6 +714,15 @@
 							"request": {
 								"method": "DELETE",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 									"host": [
@@ -795,6 +831,15 @@
 							"request": {
 								"method": "PATCH",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 									"host": [
@@ -1229,7 +1274,6 @@
 											"        const category = await api.addCategory(rnd.getCategory());\r",
 											"        const event = await api.addEvent(user.id, rnd.getEvent(category.id));\r",
 											"        const comment = await api.addComment(user.id, rnd.getComment(event.id));\r",
-											"        pm.collectionVariables.set(\"eventId\", event.id);\r",
 											"        pm.collectionVariables.set(\"comment\", comment);\r",
 											"        pm.collectionVariables.set(\"commentId\", comment.id);\r",
 											"        const replyOne = await api.addReply(user.id, comment.id, rnd.getComment(event.id));\r",
@@ -1305,22 +1349,16 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/events/:eventId/comments/:commentId/replies",
+									"raw": "{{baseUrl}}/comments/:commentId/replies",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
-										"events",
-										":eventId",
 										"comments",
 										":commentId",
 										"replies"
 									],
 									"variable": [
-										{
-											"key": "eventId",
-											"value": "{{eventId}}"
-										},
 										{
 											"key": "commentId",
 											"value": "{{commentId}}"
@@ -1382,19 +1420,19 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+											"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function () {\r",
 											"    pm.response.to.have.status(404); \r",
 											"    pm.response.to.be.withBody; \r",
 											"    pm.response.to.be.json; \r",
 											"});\r",
 											"\r",
-											"const responseBody = pm.response.json();\r",
+											"let target = pm.response.json();\r",
 											"\r",
 											"pm.test(\"Ответ должен содержать ожидаемую ошибку\", function () {\r",
-											"    pm.expect(responseBody).to.have.property('status', 'NOT_FOUND');\r",
-											"    pm.expect(responseBody).to.have.property('reason', 'Объект не найден');\r",
-											"    pm.expect(responseBody).to.have.property('message', `Не найдено события с id: ${pm.variables.get(\"eventId\")}`);\r",
-											"    pm.expect(responseBody).to.have.property('timestamp');\r",
+											"    pm.expect(target).to.have.property('status', 'NOT_FOUND');\r",
+											"    pm.expect(target).to.have.property('reason', 'Объект не найден');\r",
+											"    pm.expect(target).to.have.property('message', `Не найдено события с id: ${pm.variables.get(\"eventId\")}`);\r",
+											"    pm.expect(target).to.have.property('timestamp');\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -1649,6 +1687,15 @@
 							"request": {
 								"method": "PATCH",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{request_body}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{baseUrl}}/admin/comments/:commentId",
 									"host": [

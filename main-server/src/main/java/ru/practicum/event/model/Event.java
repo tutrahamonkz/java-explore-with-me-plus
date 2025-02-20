@@ -1,25 +1,10 @@
 package ru.practicum.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.Formula;
 import ru.practicum.category.model.Category;
 import ru.practicum.event.validate.TimeAtLeastTwoHours;
@@ -58,7 +43,8 @@ public class Event {
     private String description;
     @Formula("(SELECT COUNT(*) FROM requests r WHERE r.event_id = id AND r.status = 'CONFIRMED')")
     private int confirmedRequests;
-    @Column(name = "participant_limit") //Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
+    @Column(name = "participant_limit")
+    //Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
     private int participantLimit; //
     @Formula("(SELECT COUNT(*) FROM views v WHERE v.event_id = id)")
     private int views; //просмотры события*/
