@@ -842,12 +842,6 @@
             "type": "integer",
             "description": "id идентификатора события",
             "example": 1
-          },
-          "commentId": {
-            "uniqueItems": true,
-            "type": "integer",
-            "description": "id комментария события",
-            "example": 1
           }
         },
         "description": "Данные нового комментария"
