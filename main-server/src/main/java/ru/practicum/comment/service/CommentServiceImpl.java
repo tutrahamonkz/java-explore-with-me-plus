@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Transactional
-public class CommentServerImpl implements CommentService {
+public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final EventService eventService;
