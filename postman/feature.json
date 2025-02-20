@@ -75,14 +75,14 @@
 											"});\r",
 											"\r",
 											"// Парсим тело ответа\r",
-											"const responseBody = pm.response.json();\r",
+											"let target = pm.response.json();\r",
 											"\r",
 											"// Проверка содержания ошибки\r",
 											"pm.test(\"Ответ должен содержать ожидаемую ошибку\", function () {\r",
-											"    pm.expect(responseBody).to.have.property('status', 'BAD_REQUEST');\r",
-											"    pm.expect(responseBody).to.have.property('reason', 'Запрос составлен некорректно');\r",
-											"    pm.expect(responseBody).to.have.property('message');\r",
-											"    pm.expect(responseBody).to.have.property('timestamp');\r",
+											"    pm.expect(target).to.have.property('status', 'BAD_REQUEST');\r",
+											"    pm.expect(target).to.have.property('reason', 'Запрос составлен некорректно');\r",
+											"    pm.expect(target).to.have.property('message');\r",
+											"    pm.expect(target).to.have.property('timestamp');\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -181,14 +181,14 @@
 											"});\r",
 											"\r",
 											"// Парсим тело ответа\r",
-											"const responseBody = pm.response.json();\r",
+											"let target = pm.response.json();\r",
 											"\r",
 											"// Проверка содержания ошибки\r",
 											"pm.test(\"Ответ должен содержать ожидаемую ошибку\", function () {\r",
-											"    pm.expect(responseBody).to.have.property('status', 'NOT_FOUND');\r",
-											"    pm.expect(responseBody).to.have.property('reason', 'Объект не найден');\r",
-											"    pm.expect(responseBody).to.have.property('message', `Пользователь с id ${pm.variables.get(\"userId\")} не найден`);\r",
-											"    pm.expect(responseBody).to.have.property('timestamp');\r",
+											"    pm.expect(target).to.have.property('status', 'NOT_FOUND');\r",
+											"    pm.expect(target).to.have.property('reason', 'Объект не найден');\r",
+											"    pm.expect(target).to.have.property('message', `Пользователь с id ${pm.variables.get(\"userId\")} не найден`);\r",
+											"    pm.expect(target).to.have.property('timestamp');\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -291,14 +291,14 @@
 											"});\r",
 											"\r",
 											"// Парсим тело ответа\r",
-											"const responseBody = pm.response.json();\r",
+											"let target = pm.response.json();\r",
 											"\r",
 											"// Проверка содержания ошибки\r",
 											"pm.test(\"Ответ должен содержать ожидаемую ошибку\", function () {\r",
-											"    pm.expect(responseBody).to.have.property('status', 'BAD_REQUEST');\r",
-											"    pm.expect(responseBody).to.have.property('reason', 'Запрос составлен некорректно');\r",
-											"    pm.expect(responseBody).to.have.property('message');\r",
-											"    pm.expect(responseBody).to.have.property('timestamp');\r",
+											"    pm.expect(target).to.have.property('status', 'BAD_REQUEST');\r",
+											"    pm.expect(target).to.have.property('reason', 'Запрос составлен некорректно');\r",
+											"    pm.expect(target).to.have.property('message');\r",
+											"    pm.expect(target).to.have.property('timestamp');\r",
 											"});"
 										],
 										"type": "text/javascript",
@@ -714,6 +714,15 @@
 							"request": {
 								"method": "DELETE",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{baseUrl}}/users/:userId/comments/:commentId",
 									"host": [
@@ -1418,19 +1427,19 @@
 									"listen": "test",
 									"script": {
 										"exec": [
-											"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function () {\r",
+											"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function () {\r",
 											"    pm.response.to.have.status(404); \r",
 											"    pm.response.to.be.withBody; \r",
 											"    pm.response.to.be.json; \r",
 											"});\r",
 											"\r",
-											"const responseBody = pm.response.json();\r",
+											"let target = pm.response.json();\r",
 											"\r",
 											"pm.test(\"Ответ должен содержать ожидаемую ошибку\", function () {\r",
-											"    pm.expect(responseBody).to.have.property('status', 'NOT_FOUND');\r",
-											"    pm.expect(responseBody).to.have.property('reason', 'Объект не найден');\r",
-											"    pm.expect(responseBody).to.have.property('message', `Не найдено события с id: ${pm.variables.get(\"eventId\")}`);\r",
-											"    pm.expect(responseBody).to.have.property('timestamp');\r",
+											"    pm.expect(target).to.have.property('status', 'NOT_FOUND');\r",
+											"    pm.expect(target).to.have.property('reason', 'Объект не найден');\r",
+											"    pm.expect(target).to.have.property('message', `Не найдено события с id: ${pm.variables.get(\"eventId\")}`);\r",
+											"    pm.expect(target).to.have.property('timestamp');\r",
 											"});"
 										],
 										"type": "text/javascript",
