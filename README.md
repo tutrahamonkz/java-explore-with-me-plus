@@ -1,7 +1,7 @@
 # Explore With Me API
 
 API дополнительной фичи к сервису "Explore With Me" предоставляет возможность управления комментариями к публикуемым событиям. Сервис поддерживает три уровня доступа: публичный, приватный и административный. Основная функциональность включает создание, обновление, удаление и поиск комментариев, а также возможность публикации ответов на комментарии.
-[Подробная спецификация](https://github.com/tutrahamonkz/java-explore-with-me-plus/blob/feature_comments/ewm-stats-service-spec.json)
+[Подробная спецификация](https://github.com/tutrahamonkz/java-explore-with-me-plus/blob/feature_comments/ewm-main-comments-spec.json)
 
 ## Описание API
 
